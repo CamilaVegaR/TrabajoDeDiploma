@@ -1,0 +1,46 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BLL
+{
+    public class BLL_BITACORA
+    {
+        DAL.DAL_BITACORA mapperLogins = new DAL.DAL_BITACORA();
+
+        public int Insertar(BE.BITACORA obj)
+        {
+            int nuevoId = mapperLogins.Insertar(obj);
+
+            if (nuevoId > 0)
+            {
+                obj.Id = nuevoId;
+                obj.DVH = Servicios.GESTOR_INTEGRIDAD.CalcularDVH(obj);
+                ActualizarDVH(obj);
+                ActualizarDVVTabla();
+            }
+
+            return nuevoId;
+        }
+
+        public List<BE.BITACORA> Listar()
+        {
+            return mapperLogins.Listar();
+        }
+
+        public int ActualizarDVH(BE.BITACORA obj)
+        {
+            int resultado = mapperLogins.ActualizarDVH(obj);
+            return resultado;
+        }
+
+        private void ActualizarDVVTabla()
+        {
+            List<BE.BITACORA> lista = Listar();
+            string dvv = Servicios.GESTOR_INTEGRIDAD.CalcularDVV(lista);
+            new BLL_DIGITO_VERIFICADOR().ActualizarDVV(new BE.DIGITO_VERIFICADOR { Tabla = "BITACORA", DVV = dvv });
+        }
+    }
+}

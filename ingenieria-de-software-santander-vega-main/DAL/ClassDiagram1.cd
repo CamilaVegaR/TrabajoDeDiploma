@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="DAL.ACCESO">
+    <Position X="8" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EABAAAAAQAAAAAAAAAAAAAAAEACAAABAIAAAAAAAAAE=</HashCode>
+      <FileName>Acceso.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DAL.DAL_BACKUP">
+    <Position X="10.5" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DAL_BACKUP.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DAL.DAL_DIGITO_VERIFICADOR">
+    <Position X="5.25" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAAQAgAAAAAAAAAAAAAAAAAAAAAAIAAAAA=</HashCode>
+      <FileName>DAL_DIGITO_VERIFICADOR.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DAL.DAL_ETIQUETAS">
+    <Position X="3.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAQAAAAACABAAAAAAAAAAAAAAAAAAAAIAAAAA=</HashCode>
+      <FileName>DAL_ETIQUETAS.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DAL.DAL_IDIOMA">
+    <Position X="12.25" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAQgAAAAAAAAgAIAAAAAAAAAAAAAAAABAAAAA=</HashCode>
+      <FileName>DAL_IDIOMA.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DAL.DAL_ROLES_PERMISOS">
+    <Position X="8.75" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAYAQAEAAACAAAABACAAAAgAAAAAAAAEAAAAAAE=</HashCode>
+      <FileName>DAL_ROLES_PERMISOS.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DAL.DAL_TRADUCCION">
+    <Position X="7" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ggAAAAAAQgAAAABAAAAAMAAAAAAAAAAAAAAAAAEQAAA=</HashCode>
+      <FileName>DAL_TRADUCCION.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DAL.DAL_USUARIO_HISTORIAL">
+    <Position X="2" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAQEAAAACAAAAACAAAIIAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DAL_USUARIO_HISTORIAL.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DAL.DAL_BITACORA">
+    <Position X="3.5" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAQEAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DAL_BITACORA.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DAL.DAL_USUARIO">
+    <Position X="1.75" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgIAAAAAQEAAAACASAAACAAAAIAAAAAAAAgQIAAAAAA=</HashCode>
+      <FileName>DAL_USUARIO.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

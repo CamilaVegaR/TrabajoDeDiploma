@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Servicios.ENCRIPTADOR">
+    <Position X="2.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAA=</HashCode>
+      <FileName>ENCRIPTADOR.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Servicios.GESTOR_INTEGRIDAD">
+    <Position X="6" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAACAAA=</HashCode>
+      <FileName>GESTOR_INTEGRIDAD.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Servicios.SESSION_IDIOMA" BaseTypeListCollapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAACAAQAACAABAAAAAAABAAEAAAACQAAAAACAEA=</HashCode>
+      <FileName>SESSION_IDIOMA.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Servicios.SINGLETON_SESION">
+    <Position X="4.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAACAAAAAAAAAAAAAAABBAACAAQAAAACAAAAEAA=</HashCode>
+      <FileName>SINGLETON_SESION.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
