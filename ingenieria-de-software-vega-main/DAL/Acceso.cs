@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -9,14 +10,33 @@ namespace DAL
 {
     public class ACCESO
     {
+        // Nombre de la cadena de conexión en el archivo de configuración
+        // (App.config en Visual Studio / ingenieria_software_santander_vega.exe.config instalado).
+        public const string NOMBRE_CADENA = "Olimpic";
+
+        // Cadena de conexión única del sistema. Ya no está escrita en el código:
+        // se lee del archivo de configuración, que se puede editar con el Bloc de notas
+        // para cambiar la instancia de SQL Server (por ejemplo .\SQLEXPRESS) sin recompilar.
+        public static string CADENA_CONEXION
+        {
+            get
+            {
+                ConnectionStringSettings config = ConfigurationManager.ConnectionStrings[NOMBRE_CADENA];
+
+                if (config == null || string.IsNullOrWhiteSpace(config.ConnectionString))
+                    throw new ConfigurationErrorsException(
+                        "Falta la cadena de conexión '" + NOMBRE_CADENA + "' en el archivo de configuración del sistema.");
+
+                return config.ConnectionString;
+            }
+        }
+
         private SqlConnection conexion;
 
         public void Abrir()
         {
             conexion = new SqlConnection();
-            //conexion.ConnectionString = "Initial Catalog=ing-soft-santander-vega; Data Source=.; Integrated Security=SSPI"; //UAI
-            //conexion.ConnectionString = "Initial Catalog=ing-soft-santander-vega; Data Source=010-345-06-8472\\Navegador; Integrated Security=SSPI"; //UAI2
-            conexion.ConnectionString = "Initial Catalog=ing-soft-santander-vega; Data Source=DESKTOP-2QVGDMU\\SQLEXPRESS; Integrated Security=SSPI"; //mi casa
+            conexion.ConnectionString = CADENA_CONEXION;
             conexion.Open();
         }
         public void Cerrar()
@@ -45,7 +65,7 @@ namespace DAL
         public int Escribir(string sql, List<SqlParameter> parameters)
         {
             SqlCommand cmd = CrearComando(sql, parameters);
-            
+
             int filas = 0;
             try
             {
@@ -126,6 +146,15 @@ namespace DAL
             parametro.ParameterName = nombre;
             parametro.Value = valor;
             parametro.DbType = DbType.DateTime;
+            return parametro;
+        }
+
+        public SqlParameter CrearParametro(string nombre, decimal valor)
+        {
+            SqlParameter parametro = new SqlParameter();
+            parametro.ParameterName = nombre;
+            parametro.Value = valor;
+            parametro.DbType = DbType.Decimal;
             return parametro;
         }
 

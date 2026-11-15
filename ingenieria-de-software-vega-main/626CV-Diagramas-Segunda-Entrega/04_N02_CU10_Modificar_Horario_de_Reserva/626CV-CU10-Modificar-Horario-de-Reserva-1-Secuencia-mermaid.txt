@@ -1,0 +1,117 @@
+sequenceDiagram
+    actor E as Empleado
+    participant F as frmAgendarReserva
+    participant BCL as BLL_CLIENTE
+    participant BH as BLL_HORARIO_CLASE
+    participant BR as BLL_RESERVA
+    participant GI as GESTOR_INTEGRIDAD
+    participant EN as ENCRIPTADOR
+    participant BDV as BLL_DIGITO_VERIFICADOR
+    participant DR as DAL_RESERVA
+    participant DDV as DAL_DIGITO_VERIFICADOR
+    participant AC as ACCESO
+    Note over E,F: El empleado está en Agendar Reserva (se abre desde el menú, ver CU01)
+    E->>F: Escribe el DNI y click en "Buscar" (btnBuscarCliente_626CV_Click)
+    Note over F,BR: Búsqueda del cliente a nivel F10 (detalle en CU01 y CU03)
+    F->>BCL: ObtenerPorDni_626CV(txtDni.Trim())
+    BCL-->>F: CLIENTE
+    F->>F: clienteActual = cliente / lblClienteEncontrado = "Cliente: Nombre Apellido — Saldo: N clase(s)"
+    F->>F: CargarReservasCliente_626CV()
+    F->>BR: ListarPorClienteDetalle_626CV(idCliente)
+    BR-->>F: List<RESERVA>
+    F->>F: por cada reserva: dgvReservas.Rows.Add(Id, horario, fecha, estado)
+    F-->>E: Muestra el cliente y la grilla con sus reservas
+    E->>F: Selecciona una reserva de la grilla (dgvReservas_626CV.CurrentRow)
+    F-->>E: Muestra la reserva seleccionada
+    E->>F: Selecciona el nuevo horario (cmbHorario_626CV_SelectedIndexChanged)
+    F->>F: ActualizarCupoDisponible_626CV() (include CU04)
+    F->>BH: ConsultarCupoDisponible_626CV(idHorario, fecha, out max, out ocupado)
+    BH-->>F: hayCupo, máximo, ocupado
+    F->>F: lblCupo.Text = "Cupo: ocupado/máximo" (verde o rojo)
+    F-->>E: Muestra "Cupo: X/Y" del nuevo horario
+    E->>F: Selecciona la nueva fecha (dtpFechaClase_626CV_ValueChanged)
+    F->>F: ActualizarCupoDisponible_626CV() (include CU04)
+    F->>BH: ConsultarCupoDisponible_626CV(idHorario, fecha, out max, out ocupado)
+    BH-->>F: hayCupo, máximo, ocupado
+    F->>F: lblCupo.Text = "Cupo: ocupado/máximo" (verde o rojo)
+    F-->>E: Muestra "Cupo: X/Y" para la nueva fecha
+    E->>F: Click en "Modificar horario" (btnModificarReserva_626CV_Click)
+    alt dgvReservas.CurrentRow == null
+        F-->>E: MessageBox "Seleccione una reserva de la lista."
+    else Hay una reserva seleccionada
+        F->>F: idReserva = Convert.ToInt32(CurrentRow.Cells["colIdReserva"].Value)
+        F->>F: horarioNuevo = (HORARIO_CLASE)cmbHorario.SelectedItem / fechaNueva = dtpFechaClase.Value.Date
+        F->>F: ValidarDiaCoincideConFecha_626CV(horarioNuevo, fechaNueva)
+        alt fechaNueva.DayOfWeek != horarioNuevo.Dia
+            F->>F: HORARIO_CLASE.TraducirDia_626CV(horarioNuevo.Dia)
+            F-->>E: MessageBox "La fecha elegida (dd/MM/yyyy) no es un [día]. Elija una fecha que coincida con el día del horario."
+        else Día correcto
+            F->>BR: ModificarReserva_626CV(idReserva, horarioNuevo, fechaNueva)
+            alt horarioNuevo == null
+                BR-->>F: "Debe seleccionar un horario."
+                F-->>E: MessageBox (mensaje, "No se pudo modificar")
+            else Horario seleccionado
+                BR->>DR: ModificarHorarioReserva_626CV(idReserva, horarioNuevo.Id, fechaNueva)
+                Note over AC: En cada acceso la DAL hace NEW ACCESO(), Abrir(), CrearParametro() por cada parámetro y, al final, Cerrar()
+                DR->>AC: Leer("SP_RESERVA_MODIFICAR_HORARIO_626CV", parametros)
+                AC-->>DR: DataTable (Resultado)
+                Note over AC: El SP, en una transacción, valida que la reserva siga ACTIVA (-1), que el nuevo horario tenga cupo (-2) y que no quede duplicada (-3), y cambia horario y fecha sin tocar el saldo
+                DR->>DR: resultado = Resultado (-99 si no hubo filas)
+                DR-->>BR: resultado
+                alt resultado == 1
+                    BR->>DR: ObtenerPorId_626CV(idReserva)
+                    DR->>AC: Leer("SP_RESERVA_OBTENER_POR_ID_626CV", parametros)
+                    AC-->>DR: DataTable
+                    DR->>DR: NEW RESERVA
+                    DR-->>BR: reservaModificada
+                    BR->>GI: CalcularDVH(reservaModificada)
+                    GI->>EN: Encriptar(stringBase)
+                    EN-->>GI: hash SHA-256
+                    GI-->>BR: dvh
+                    BR->>DR: ActualizarDVH_626CV(reservaModificada)
+                    DR->>AC: Escribir("SP_RESERVA_UPD_DVH_626CV", parametros)
+                    AC-->>DR: filas afectadas
+                    DR-->>BR: filas
+                    BR->>BR: ActualizarDVVReserva_626CV()
+                    BR->>DR: ListarTodas_626CV()
+                    DR->>AC: Leer("SP_RESERVA_LISTAR_TODAS_626CV")
+                    AC-->>DR: SqlDataReader
+                    DR->>DR: por cada fila: NEW RESERVA
+                    DR-->>BR: List<RESERVA>
+                    BR->>GI: CalcularDVV(listaReservas)
+                    GI->>EN: Encriptar(concatenación de los DVH)
+                    EN-->>GI: hash SHA-256
+                    GI-->>BR: dvv
+                    BR->>BDV: NEW BLL_DIGITO_VERIFICADOR().ActualizarDVV(NEW DIGITO_VERIFICADOR {Tabla = "RESERVA", DVV = dvv})
+                    BDV->>DDV: ActualizarDVV(dv)
+                    DDV->>AC: Escribir("SP_DIGITO_VERIFICADOR_UPD", parametros)
+                    AC-->>DDV: filas afectadas
+                    DDV-->>BDV: void
+                    BDV-->>BR: void
+                    BR-->>F: null (éxito)
+                    F-->>E: MessageBox "Reserva modificada correctamente."
+                    Note over F,BR: Refresco de pantalla a nivel F10
+                    F->>F: ActualizarCupoDisponible_626CV()
+                    F->>BH: ConsultarCupoDisponible_626CV(idHorario, fecha, out max, out ocupado)
+                    BH-->>F: hayCupo, máximo, ocupado
+                    F->>F: CargarReservasCliente_626CV()
+                    F->>BR: ListarPorClienteDetalle_626CV(idCliente)
+                    BR-->>F: List<RESERVA>
+                    F->>F: por cada reserva: dgvReservas.Rows.Add(...)
+                    F-->>E: Muestra el cupo y la grilla con el horario nuevo
+                else resultado == -1
+                    BR-->>F: "La reserva no existe o ya no está activa."
+                    F-->>E: MessageBox (mensaje, "No se pudo modificar")
+                else resultado == -2
+                    BR-->>F: "El nuevo horario no tiene cupo disponible."
+                    F-->>E: MessageBox (mensaje, "No se pudo modificar")
+                else resultado == -3
+                    BR-->>F: "El cliente ya tiene una reserva activa para ese horario y esa fecha."
+                    F-->>E: MessageBox (mensaje, "No se pudo modificar")
+                else otro (-99)
+                    BR-->>F: "No se pudo modificar la reserva. Intente nuevamente."
+                    F-->>E: MessageBox (mensaje, "No se pudo modificar")
+                end
+            end
+        end
+    end

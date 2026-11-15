@@ -129,6 +129,62 @@ namespace BLL
                 string dvvTraduccion = GESTOR_INTEGRIDAD.CalcularDVV(traducciones);
                 ActualizarDVV(new DIGITO_VERIFICADOR { Tabla = "TRADUCCION", DVV = dvvTraduccion });
             }
+
+  
+            BLL_PACK bllPack = new BLL_PACK();
+            List<PACK> packs = bllPack.ListarOrdenadosPorId_626CV();
+            foreach (var p in packs)
+            {
+                p.DVH = GESTOR_INTEGRIDAD.CalcularDVH(p);
+                bllPack.ActualizarDVH_626CV(p);
+            }
+            ActualizarDVV(new DIGITO_VERIFICADOR { Tabla = "PACK", DVV = GESTOR_INTEGRIDAD.CalcularDVV(packs) });
+
+            BLL_PACK_C bllPackC = new BLL_PACK_C();
+            List<PACK_C> cambiosPack = bllPackC.ListarTodos_626CV();
+            foreach (var c in cambiosPack)
+            {
+                c.DVH = GESTOR_INTEGRIDAD.CalcularDVH(c);
+                bllPackC.ActualizarDVH_626CV(c);
+            }
+            ActualizarDVV(new DIGITO_VERIFICADOR { Tabla = "PACK_C", DVV = GESTOR_INTEGRIDAD.CalcularDVV(cambiosPack) });
+
+            BLL_COMPRA bllCompra = new BLL_COMPRA();
+            List<COMPRA> compras = bllCompra.ListarTodas_626CV();
+            foreach (var c in compras)
+            {
+                c.DVH = GESTOR_INTEGRIDAD.CalcularDVH(c);
+                bllCompra.ActualizarDVH_626CV(c);
+            }
+            ActualizarDVV(new DIGITO_VERIFICADOR { Tabla = "COMPRA", DVV = GESTOR_INTEGRIDAD.CalcularDVV(compras) });
+
+
+            DAL_CLIENTE dalCliente = new DAL_CLIENTE();
+            List<CLIENTE> clientes = dalCliente.ListarClientes_626CV();
+            foreach (var c in clientes)
+            {
+                c.DVH = GESTOR_INTEGRIDAD.CalcularDVH(c);
+                dalCliente.ActualizarDVH_626CV(c);
+            }
+            ActualizarDVV(new DIGITO_VERIFICADOR { Tabla = "CLIENTE", DVV = GESTOR_INTEGRIDAD.CalcularDVV(clientes) });
+
+            DAL_HORARIO_CLASE dalHorario = new DAL_HORARIO_CLASE();
+            List<HORARIO_CLASE> horarios = dalHorario.ListarHorarios_626CV();
+            foreach (var h in horarios)
+            {
+                h.DVH = GESTOR_INTEGRIDAD.CalcularDVH(h);
+                dalHorario.ActualizarDVH_626CV(h);
+            }
+            ActualizarDVV(new DIGITO_VERIFICADOR { Tabla = "HORARIO_CLASE", DVV = GESTOR_INTEGRIDAD.CalcularDVV(horarios) });
+
+            DAL_RESERVA dalReserva = new DAL_RESERVA();
+            List<RESERVA> reservas = dalReserva.ListarTodas_626CV();
+            foreach (var r in reservas)
+            {
+                r.DVH = GESTOR_INTEGRIDAD.CalcularDVH(r);
+                dalReserva.ActualizarDVH_626CV(r);
+            }
+            ActualizarDVV(new DIGITO_VERIFICADOR { Tabla = "RESERVA", DVV = GESTOR_INTEGRIDAD.CalcularDVV(reservas) });
         }
 
         public List<string> ValidarIntegridadBaseDatos()
@@ -148,6 +204,18 @@ namespace BLL
             VerificarTabla("USUARIO_HISTORIAL", new BLL_USUARIO_HISTORIAL().ListarHistorialCompleto().Cast<IIntegrable>(), errores);
 
             VerificarTabla("TRADUCCION", new BLL_TRADUCCION().listar().Cast<IIntegrable>(), errores);
+
+            VerificarTabla("PACK", new BLL_PACK().ListarOrdenadosPorId_626CV().Cast<IIntegrable>(), errores);
+
+            VerificarTabla("PACK_C", new BLL_PACK_C().ListarTodos_626CV().Cast<IIntegrable>(), errores);
+
+            VerificarTabla("COMPRA", new BLL_COMPRA().ListarTodas_626CV().Cast<IIntegrable>(), errores);
+
+            VerificarTabla("CLIENTE", new DAL_CLIENTE().ListarClientes_626CV().Cast<IIntegrable>(), errores);
+
+            VerificarTabla("HORARIO_CLASE", new DAL_HORARIO_CLASE().ListarHorarios_626CV().Cast<IIntegrable>(), errores);
+
+            VerificarTabla("RESERVA", new DAL_RESERVA().ListarTodas_626CV().Cast<IIntegrable>(), errores);
 
             return errores;
         }
@@ -169,7 +237,7 @@ namespace BLL
                 string dvhCalculado = GESTOR_INTEGRIDAD.CalcularDVH(reg);
                 if (reg.DVH != dvhCalculado)
                 {
-                    var propId = reg.GetType().GetProperty("Id") ?? reg.GetType().GetProperty("IdUsuario") ?? reg.GetType().GetProperty("IdHistorial");
+                    var propId = reg.GetType().GetProperty("Id") ?? reg.GetType().GetProperty("IdUsuario") ?? reg.GetType().GetProperty("IdHistorial") ?? reg.GetType().GetProperty("Id_626CV") ?? reg.GetType().GetProperty("IdCambio_626CV");
                     string idStr = propId != null ? propId.GetValue(reg).ToString() : "Desconocido";
 
                     errores.Add($"El registro ID [{idStr}] de la tabla '{nombreTabla}' fue alterado (Fallo en Hash Horizontal - DVH).");

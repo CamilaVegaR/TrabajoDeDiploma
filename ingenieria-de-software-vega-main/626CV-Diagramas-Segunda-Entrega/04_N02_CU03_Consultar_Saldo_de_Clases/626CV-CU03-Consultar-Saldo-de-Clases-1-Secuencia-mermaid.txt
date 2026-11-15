@@ -1,0 +1,48 @@
+sequenceDiagram
+    actor E as Empleado
+    participant F as frmAgendarReserva
+    participant BCL as BLL_CLIENTE
+    participant DCL as DAL_CLIENTE
+    participant AC as ACCESO
+    Note over F,DCL: Incluido desde CU01, CU05, CU06 y CU11. En Compras (CU05 y CU06) el recorrido es el mismo en frmCompras, que muestra el saldo con MostrarCliente_626CV()
+    alt Consulta por DNI al buscar al cliente (CU01, CU05, CU06)
+        E->>F: Escribe el DNI del cliente (txtDni_626CV)
+        F-->>E: Muestra el DNI escrito
+        E->>F: Click en "Buscar" (btnBuscarCliente_626CV_Click)
+        F->>F: string.IsNullOrWhiteSpace(txtDni.Text)
+        alt DNI vacío
+            F-->>E: MessageBox "Ingrese un DNI para buscar."
+        else DNI ingresado
+            F->>BCL: ObtenerPorDni_626CV(txtDni.Trim())
+            BCL->>DCL: ObtenerPorDni_626CV(dni)
+            Note over AC: En cada acceso la DAL hace NEW ACCESO(), Abrir(), CrearParametro() por cada parámetro y, al final, Cerrar()
+            DCL->>AC: Leer("SP_CLIENTE_OBTENER_POR_DNI_626CV", parametros)
+            AC-->>DCL: DataTable
+            alt Hay fila
+                DCL->>DCL: NEW CLIENTE (Id, Nombre, Apellido, Dni, Teléfono, Email, SaldoClases, DVH)
+            end
+            DCL-->>BCL: CLIENTE / null
+            BCL-->>F: CLIENTE / null
+            F->>F: clienteActual = resultado
+            alt clienteActual == null
+                F->>F: lblClienteEncontrado = "Cliente no encontrado. Complete los datos para registrarlo."
+                F-->>E: Muestra el panel de cliente nuevo (no se ejecuta este caso de uso: extend CU02)
+            else Cliente encontrado
+                F->>F: lblClienteEncontrado = "Cliente: " + Nombre + " " + Apellido + " — Saldo: " + SaldoClases + " clase(s)"
+                F-->>E: Muestra "Cliente: Nombre Apellido — Saldo: N clase(s)"
+            end
+        end
+    else Actualización del saldo después de agendar, cancelar o comprar (CU01, CU11, CU05)
+        E->>F: Click en "Agendar" o "Cancelar reserva" (o "Registrar compra" en frmCompras)
+        Note over F: La operación del caso de uso que lo incluye ya terminó y cambió el saldo
+        F->>BCL: ObtenerPorId_626CV(clienteActual.Id)
+        BCL->>DCL: ObtenerPorId_626CV(id)
+        DCL->>AC: Leer("SP_CLIENTE_OBTENER_POR_ID_626CV", parametros)
+        AC-->>DCL: DataTable
+        DCL->>DCL: NEW CLIENTE (Id, Nombre, Apellido, Dni, Teléfono, Email, SaldoClases, DVH)
+        DCL-->>BCL: CLIENTE
+        BCL-->>F: CLIENTE (saldo actualizado)
+        F->>F: clienteActual = cliente
+        F->>F: lblClienteEncontrado = "Cliente: " + Nombre + " " + Apellido + " — Saldo: " + SaldoClases + " clase(s)"
+        F-->>E: Muestra "Cliente: Nombre Apellido — Saldo: N clase(s)" con el saldo nuevo y retorna al caso de uso que lo incluyó
+    end

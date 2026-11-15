@@ -1,0 +1,255 @@
+sequenceDiagram
+    actor E as Empleado
+    participant M as frmMenu
+    participant F as frmCompras
+    participant BCL as BLL_CLIENTE
+    participant BP as BLL_PACK
+    participant BC as BLL_COMPRA
+    participant SS as SINGLETON_SESION
+    participant BB as BLL_BITACORA
+    participant GI as GESTOR_INTEGRIDAD
+    participant EN as ENCRIPTADOR
+    participant BDV as BLL_DIGITO_VERIFICADOR
+    participant DCL as DAL_CLIENTE
+    participant DP as DAL_PACK
+    participant DC as DAL_COMPRA
+    participant DB2 as DAL_BITACORA
+    participant DDV as DAL_DIGITO_VERIFICADOR
+    participant AC as ACCESO
+    E->>M: Click en "Registrar compra" (registrarCompraToolStripMenuItem_Click)
+    M->>F: NEW frmCompras()
+    F->>F: InitializeComponent()
+    F->>BCL: NEW BLL_CLIENTE()
+    BCL-->>F: bllCliente
+    F->>BP: NEW BLL_PACK()
+    BP-->>F: bllPack
+    F->>BC: NEW BLL_COMPRA()
+    BC-->>F: bllCompra
+    F-->>M: formulario creado
+    M->>M: Navegar(form, null, true) → NAVEGACION_HELPER.Redirigir
+    M->>F: Show()
+    F->>F: OnLoad(e)
+    F->>F: ConfigurarColumnasGrilla_626CV()
+    F->>F: CargarCanalesContacto_626CV() (Presencial, Telefónico, Redes sociales)
+    F->>F: CargarPacks_626CV()
+    F->>BP: ListarActivos_626CV()
+    BP->>DP: ListarActivos_626CV()
+    DP->>DP: Listar_626CV("SP_PACK_LISTAR_ACTIVOS_626CV")
+    Note over AC: En cada acceso la DAL hace NEW ACCESO(), Abrir(), CrearParametro() por cada parámetro y, al final, Cerrar()
+    DP->>AC: Leer("SP_PACK_LISTAR_ACTIVOS_626CV")
+    AC-->>DP: DataTable
+    DP->>DP: por cada fila: NEW PACK
+    DP-->>BP: List<PACK> (solo activos)
+    BP-->>F: List<PACK>
+    F->>F: cmbPack.DataSource = packs
+    alt packs.Count == 0
+        F->>F: lblImporte = "No hay packs disponibles para la venta." (rojo) / btnRegistrarCompra.Enabled = false
+    else Hay packs activos
+        F->>F: btnRegistrarCompra.Enabled = true / MostrarImporte_626CV()
+    end
+    F->>F: LimpiarCliente_626CV() (clienteActual = null, panel oculto, grilla vacía)
+    F-->>M: formulario visible
+    M->>M: Close()
+    M-->>E: Muestra la pantalla Compras (el menú se cierra)
+    E->>F: Escribe el DNI del cliente (txtDni_626CV)
+    F-->>E: Muestra el DNI escrito
+    E->>F: Click en "Buscar" (btnBuscarCliente_626CV_Click)
+    alt DNI vacío
+        F-->>E: MessageBox "Debe ingresar el DNI del cliente."
+    else DNI ingresado
+        F->>BCL: ObtenerPorDni_626CV(txtDni.Trim())
+        BCL->>DCL: ObtenerPorDni_626CV(dni)
+        DCL->>AC: Leer("SP_CLIENTE_OBTENER_POR_DNI_626CV", parametros)
+        AC-->>DCL: DataTable
+        alt Hay fila
+            DCL->>DCL: NEW CLIENTE (con SaldoClases)
+        end
+        DCL-->>BCL: CLIENTE / null
+        BCL-->>F: CLIENTE / null
+        F->>F: clienteActual = resultado
+        alt clienteActual == null
+            F->>F: lblClienteEncontrado = "Cliente no encontrado. Complete los datos para registrarlo."
+            F->>F: pnlClienteNuevo.Visible = true / dgvCompras.Rows.Clear() / lblHistorial = "Historial de compras"
+            F-->>E: Muestra el panel de cliente nuevo
+            E->>F: Completa nombre, apellido, teléfono y email y click en "Registrar cliente" (btnRegistrarCliente_626CV_Click)
+            Note over F,BCL: extend CU02 - Registrar Cliente_626CV (detalle en su diagrama)
+            F->>BCL: RegistrarCliente_626CV(nuevo)
+            BCL-->>F: CLIENTE registrado
+            F->>F: clienteActual = cliente / MostrarCliente_626CV() / pnlClienteNuevo.Visible = false
+            F-->>E: MessageBox "Cliente registrado correctamente." y muestra "Cliente: Nombre Apellido — Saldo: 0 clase(s)"
+        else Cliente encontrado (include CU03)
+            F->>F: MostrarCliente_626CV(): lblClienteEncontrado = "Cliente: Nombre Apellido — Saldo: N clase(s)"
+            F->>F: pnlClienteNuevo.Visible = false
+            F->>F: CargarHistorial_626CV() (CU06)
+            F->>BC: ListarPorCliente_626CV(idCliente)
+            BC-->>F: List<COMPRA>
+            F->>F: por cada compra: dgvCompras.Rows.Add(fecha, pack, clases, descuento, importe, canal)
+            F-->>E: Muestra el cliente, su saldo y su historial de compras
+        end
+    end
+    E->>F: Selecciona el pack (cmbPack_626CV_SelectedIndexChanged)
+    F->>F: MostrarImporte_626CV()
+    F->>F: pack = cmbPack.SelectedItem as PACK
+    F->>F: pack.CalcularPrecioFinal_626CV() = precioLista × (1 - descuento / 100)
+    F->>F: lblImporte = "Importe a cobrar: $ X" (verde)
+    F-->>E: Muestra "Importe a cobrar: $ X"
+    E->>F: Selecciona el canal de contacto (cmbCanalContacto_626CV)
+    F-->>E: Muestra el canal elegido
+    E->>F: Click en "Registrar compra" (btnRegistrarCompra_626CV_Click)
+    alt clienteActual == null
+        F-->>E: MessageBox "Debe buscar o registrar un cliente primero."
+    else pack == null
+        F-->>E: MessageBox "Debe seleccionar un pack."
+    else Cliente y pack seleccionados
+        F->>F: ObtenerCanalContactoSeleccionado_626CV()
+        F->>BC: RegistrarCompra_626CV(clienteActual, pack, canal, out compraRegistrada)
+        alt cliente == null o cliente.Id <= 0
+            BC-->>F: "Debe buscar un cliente."
+            F-->>E: MessageBox (mensaje, "No se pudo registrar la compra")
+        else pack == null
+            BC-->>F: "Debe seleccionar un pack."
+            F-->>E: MessageBox (mensaje, "No se pudo registrar la compra")
+        else Datos completos
+            BC->>BC: NEW COMPRA(cliente, pack, canal)
+            BC->>DC: InsertarCompra_626CV(nueva, out idCompra)
+            DC->>AC: Leer("SP_COMPRA_INS_626CV", parametros)
+            AC-->>DC: DataTable (Resultado, IdCompra)
+            Note over AC: El SP, en una transacción, valida que el pack siga activo (-1) y que el cliente exista (-2), calcula el importe con el descuento, inserta la compra y suma las clases al saldo del cliente
+            DC->>DC: resultado = Resultado (-99 si no hubo filas)
+            DC-->>BC: resultado, idCompra
+            alt resultado == 1
+                BC->>DC: ObtenerPorId_626CV(idCompra)
+                DC->>AC: Leer("SP_COMPRA_OBTENER_POR_ID_626CV", parametros)
+                AC-->>DC: DataTable
+                DC->>DC: MapearCompra_626CV(fila) → NEW COMPRA
+                DC-->>BC: compraRegistrada
+                BC->>GI: CalcularDVH(compraRegistrada)
+                GI->>EN: Encriptar(stringBase)
+                EN-->>GI: hash SHA-256
+                GI-->>BC: dvh
+                BC->>DC: ActualizarDVH_626CV(compraRegistrada)
+                DC->>AC: Escribir("SP_COMPRA_UPD_DVH_626CV", parametros)
+                AC-->>DC: filas afectadas
+                DC-->>BC: filas
+                BC->>BC: ActualizarDVVCompra_626CV()
+                BC->>DC: ListarTodas_626CV()
+                DC->>AC: Leer("SP_COMPRA_LISTAR_TODAS_626CV")
+                AC-->>DC: DataTable
+                DC->>DC: por cada fila: MapearCompra_626CV → NEW COMPRA
+                DC-->>BC: List<COMPRA>
+                BC->>GI: CalcularDVV(listaCompras)
+                GI->>EN: Encriptar(concatenación de los DVH)
+                EN-->>GI: hash SHA-256
+                GI-->>BC: dvv
+                BC->>BDV: NEW BLL_DIGITO_VERIFICADOR().ActualizarDVV(NEW DIGITO_VERIFICADOR {Tabla = "COMPRA", DVV = dvv})
+                BDV->>DDV: ActualizarDVV(dv)
+                DDV->>AC: Escribir("SP_DIGITO_VERIFICADOR_UPD", parametros)
+                AC-->>DDV: filas afectadas
+                DDV-->>BDV: void
+                BDV-->>BC: void
+                BC->>BC: ActualizarDVHYDVVCliente_626CV(idCliente)
+                BC->>DCL: ObtenerPorId_626CV(idCliente)
+                DCL->>AC: Leer("SP_CLIENTE_OBTENER_POR_ID_626CV", parametros)
+                AC-->>DCL: DataTable
+                DCL->>DCL: NEW CLIENTE
+                DCL-->>BC: CLIENTE (saldo ya sumado)
+                BC->>GI: CalcularDVH(cliente)
+                GI->>EN: Encriptar(stringBase)
+                EN-->>GI: hash SHA-256
+                GI-->>BC: dvh
+                BC->>DCL: ActualizarDVH_626CV(cliente)
+                DCL->>AC: Escribir("SP_CLIENTE_UPD_DVH_626CV", parametros)
+                AC-->>DCL: filas afectadas
+                DCL-->>BC: filas
+                BC->>DCL: ListarClientes_626CV()
+                DCL->>AC: Leer("SP_CLIENTE_LISTAR_626CV")
+                AC-->>DCL: SqlDataReader
+                DCL->>DCL: por cada fila: NEW CLIENTE
+                DCL-->>BC: List<CLIENTE>
+                BC->>GI: CalcularDVV(listaClientes)
+                GI->>EN: Encriptar(concatenación de los DVH)
+                EN-->>GI: hash SHA-256
+                GI-->>BC: dvv
+                BC->>BDV: NEW BLL_DIGITO_VERIFICADOR().ActualizarDVV(NEW DIGITO_VERIFICADOR {Tabla = "CLIENTE", DVV = dvv})
+                BDV->>DDV: ActualizarDVV(dv)
+                DDV->>AC: Escribir("SP_DIGITO_VERIFICADOR_UPD", parametros)
+                AC-->>DDV: filas afectadas
+                DDV-->>BDV: void
+                BDV-->>BC: void
+                BC->>BC: RegistrarBitacora_626CV("DNI " + dni + " - " + nombrePack) (recorta a 50 caracteres)
+                BC->>SS: GetInstance().usuario
+                SS-->>BC: usuario logueado
+                BC->>BC: NEW BITACORA(usuario, DateTime.Now, COMPRA_REGISTRADA, observación)
+                BC->>BB: NEW BLL_BITACORA()
+                BB-->>BC: bllBitacora
+                BC->>BB: Insertar(bitacora)
+                BB->>BB: FechaHora sin milisegundos
+                BB->>DB2: Insertar(bitacora)
+                DB2->>DB2: idUsuario = bitacora.Usuario.Id
+                DB2->>AC: LeerEscalar("SP_BITACORA_INS", parametros)
+                AC-->>DB2: nuevoId
+                DB2-->>BB: nuevoId
+                alt nuevoId > 0
+                    BB->>BB: bitacora.Id = nuevoId
+                    BB->>GI: CalcularDVH(bitacora)
+                    GI->>EN: Encriptar(stringBase)
+                    EN-->>GI: hash SHA-256
+                    GI-->>BB: dvh
+                    BB->>DB2: ActualizarDVH(bitacora)
+                    DB2->>AC: Escribir("SP_BITACORA_ACTUALIZAR_DVH", parametros)
+                    AC-->>DB2: filas afectadas
+                    DB2-->>BB: filas
+                    BB->>BB: ActualizarDVVTabla()
+                    BB->>DB2: Listar()
+                    DB2->>AC: Leer("SP_BITACORA_LISTAR")
+                    AC-->>DB2: SqlDataReader
+                    DB2->>DB2: por cada fila: NEW BITACORA
+                    DB2-->>BB: List<BITACORA>
+                    BB->>GI: CalcularDVV(listaBitacora)
+                    GI->>EN: Encriptar(concatenación de los DVH)
+                    EN-->>GI: hash SHA-256
+                    GI-->>BB: dvv
+                    BB->>BDV: NEW BLL_DIGITO_VERIFICADOR().ActualizarDVV(NEW DIGITO_VERIFICADOR {Tabla = "BITACORA", DVV = dvv})
+                    BDV->>DDV: ActualizarDVV(dv)
+                    DDV->>AC: Escribir("SP_DIGITO_VERIFICADOR_UPD", parametros)
+                    AC-->>DDV: filas afectadas
+                    DDV-->>BDV: void
+                    BDV-->>BB: void
+                end
+                BB-->>BC: nuevoId
+                BC-->>F: null (éxito), compraRegistrada
+                Note over F,BC: Refresco de pantalla a nivel F10 (mismos métodos que arriba)
+                F->>BCL: ObtenerPorId_626CV(clienteActual.Id) (include CU03)
+                BCL-->>F: CLIENTE (saldo actualizado)
+                F->>F: clienteActual = cliente / MostrarCliente_626CV()
+                F->>F: importe = compraRegistrada.Importe_626CV (o pack.CalcularPrecioFinal_626CV() si vino null)
+                F-->>E: MessageBox "Compra registrada correctamente. Importe a cobrar: $ X. Saldo actual: N clase(s)."
+                F->>F: CargarHistorial_626CV()
+                F->>BC: ListarPorCliente_626CV(idCliente)
+                BC-->>F: List<COMPRA>
+                F->>F: por cada compra: dgvCompras.Rows.Add(...)
+                F-->>E: Historial de compras actualizado
+            else resultado == -1
+                BC-->>F: "El pack seleccionado ya no está disponible."
+                F-->>E: MessageBox (mensaje, "No se pudo registrar la compra")
+                F->>F: CargarPacks_626CV()
+                F->>BP: ListarActivos_626CV()
+                BP-->>F: List<PACK>
+                F-->>E: Lista de packs actualizada
+            else resultado == -2
+                BC-->>F: "El cliente no existe."
+                F-->>E: MessageBox (mensaje, "No se pudo registrar la compra")
+                F->>F: CargarPacks_626CV()
+                F->>BP: ListarActivos_626CV()
+                BP-->>F: List<PACK>
+                F-->>E: Lista de packs actualizada
+            else otro (-99)
+                BC-->>F: "No se pudo registrar la compra. Intente nuevamente."
+                F-->>E: MessageBox (mensaje, "No se pudo registrar la compra")
+                F->>F: CargarPacks_626CV()
+                F->>BP: ListarActivos_626CV()
+                BP-->>F: List<PACK>
+                F-->>E: Lista de packs actualizada
+            end
+        end
+    end

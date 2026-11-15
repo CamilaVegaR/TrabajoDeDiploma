@@ -76,11 +76,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BLL_BACKUP.cs" />
+    <Compile Include="BLL_BASE_DATOS.cs" />
+    <Compile Include="BLL_CLIENTE.cs" />
+    <Compile Include="BLL_COMPRA.cs" />
     <Compile Include="BLL_DIGITO_VERIFICADOR.cs" />
     <Compile Include="BLL_BITACORA.cs" />
     <Compile Include="BLL_ETIQUETAS.cs" />
+    <Compile Include="BLL_HORARIO_CLASE.cs" />
     <Compile Include="BLL_IDIOMA.cs" />
+    <Compile Include="BLL_PACK.cs" />
+    <Compile Include="BLL_PACK_C.cs" />
+    <Compile Include="BLL_REPORTE.cs" />
+    <Compile Include="BLL_RESERVA.cs" />
     <Compile Include="BLL_ROLES_PERMISOS.cs" />
+    <Compile Include="BLL_SERIALIZACION.cs" />
     <Compile Include="BLL_TRADUCCION.cs" />
     <Compile Include="BLL_USUARIO_HISTORIAL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -1,0 +1,53 @@
+sequenceDiagram
+    actor E as Empleado
+    participant F as frmAgendarReserva
+    participant BH as BLL_HORARIO_CLASE
+    participant DH as DAL_HORARIO_CLASE
+    participant AC as ACCESO
+    Note over F,DH: Incluido desde CU01, CU10 y CU11. También se ejecuta al abrir la pantalla (OnLoad)
+    alt El empleado cambia el horario o la fecha (CU01, CU10)
+        E->>F: Selecciona el horario (cmbHorario_626CV) o la fecha de la clase (dtpFechaClase_626CV)
+        alt Cambió el horario
+            F->>F: cmbHorario_626CV_SelectedIndexChanged()
+        else Cambió la fecha
+            F->>F: dtpFechaClase_626CV_ValueChanged()
+        end
+        F->>F: ActualizarCupoDisponible_626CV()
+        F->>F: horario = cmbHorario.SelectedItem as HORARIO_CLASE
+        alt horario == null
+            F->>F: lblCupo.Text = ""
+            F-->>E: Deja el cupo en blanco
+        else Horario seleccionado
+            F->>F: fecha = dtpFechaClase.Value.Date
+            F->>BH: ConsultarCupoDisponible_626CV(horario.Id, fecha, out cupoMaximo, out cupoOcupado)
+            BH->>DH: ConsultarCupoDisponible_626CV(idHorario, fecha, out cupoMaximo, out cupoOcupado)
+            Note over AC: En cada acceso la DAL hace NEW ACCESO(), Abrir(), CrearParametro() por cada parámetro y, al final, Cerrar()
+            DH->>AC: Leer("SP_HORARIO_CLASE_CONSULTAR_CUPO_626CV", parametros)
+            AC-->>DH: DataTable (CUPO_MAXIMO_626CV, CUPO_OCUPADO_626CV)
+            Note over AC: El SP cuenta las reservas ACTIVAS de ese horario en esa fecha y devuelve el cupo máximo del horario
+            DH->>DH: cupoMaximo = 0 / cupoOcupado = 0
+            alt La tabla tiene filas
+                DH->>DH: cupoMaximo = CUPO_MAXIMO_626CV / cupoOcupado = CUPO_OCUPADO_626CV
+            end
+            DH->>DH: hayCupo = cupoOcupado < cupoMaximo
+            DH-->>BH: hayCupo, cupoMaximo, cupoOcupado
+            BH-->>F: hayCupo, cupoMaximo, cupoOcupado
+            F->>F: lblCupo.Text = "Cupo: " + cupoOcupado + "/" + cupoMaximo
+            alt hayCupo
+                F->>F: lblCupo.ForeColor = DarkGreen
+                F-->>E: Muestra "Cupo: X/Y" en verde (hay lugar)
+            else Sin cupo (ocupado = máximo)
+                F->>F: lblCupo.ForeColor = DarkRed
+                F-->>E: Muestra "Cupo: X/Y" en rojo (el horario no tiene cupo)
+            end
+        end
+    else Después de agendar, modificar o cancelar una reserva (CU01, CU10, CU11)
+        E->>F: Click en "Agendar", "Modificar horario" o "Cancelar reserva"
+        Note over F: La operación del caso de uso que lo incluye ya terminó y cambió la ocupación del horario
+        F->>F: ActualizarCupoDisponible_626CV()
+        Note over F,AC: Mismo recorrido que arriba: ConsultarCupoDisponible_626CV → DAL_HORARIO_CLASE → Leer(SP_HORARIO_CLASE_CONSULTAR_CUPO_626CV)
+        F->>BH: ConsultarCupoDisponible_626CV(horario.Id, fecha, out cupoMaximo, out cupoOcupado)
+        BH-->>F: hayCupo, cupoMaximo, cupoOcupado
+        F->>F: lblCupo.Text = "Cupo: X/Y" (verde o rojo)
+        F-->>E: Muestra el cupo actualizado y retorna al caso de uso que lo incluyó
+    end

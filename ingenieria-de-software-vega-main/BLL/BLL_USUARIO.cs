@@ -99,7 +99,7 @@ namespace BLL
             historialBLL.RegistrarCambio(usuarioModificado, responsable, TIPO_OPERACION.MODIFICACION);
         }
 
-        public void ModificarUsuario(USUARIO usuarioModificado, USUARIO responsable)
+        public void ModificarUsuario(USUARIO usuarioModificado, USUARIO responsable, TIPO_OPERACION operacion = TIPO_OPERACION.MODIFICACION)
         {
             USUARIO usuarioAnterior = mapperUsuario.ObtenerPorId(usuarioModificado.Id);
 
@@ -125,7 +125,7 @@ namespace BLL
             }
 
             BLL_USUARIO_HISTORIAL historialBLL = new BLL_USUARIO_HISTORIAL();
-            historialBLL.RegistrarCambio(usuarioModificado, responsable, TIPO_OPERACION.MODIFICACION);
+            historialBLL.RegistrarCambio(usuarioModificado, responsable, operacion);
         }
 
         public void ReactivarUsuario(USUARIO usuarioAReactivar, USUARIO usuarioAdminLogueado)

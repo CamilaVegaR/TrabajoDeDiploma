@@ -12,6 +12,8 @@ namespace BLL
 
         public int Insertar(BE.BITACORA obj)
         {
+            obj.FechaHora = new DateTime(obj.FechaHora.Ticks - (obj.FechaHora.Ticks % TimeSpan.TicksPerSecond), obj.FechaHora.Kind);
+
             int nuevoId = mapperLogins.Insertar(obj);
 
             if (nuevoId > 0)
@@ -23,6 +25,7 @@ namespace BLL
             }
 
             return nuevoId;
+        
         }
 
         public List<BE.BITACORA> Listar()

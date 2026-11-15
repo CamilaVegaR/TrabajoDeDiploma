@@ -65,6 +65,7 @@ namespace DAL
                         hist.UsuarioResponsable = mpUsuario.ObtenerPorId(Convert.ToInt32(row["IdUsuarioResponsable"]));
                         hist.Operacion = (TIPO_OPERACION)Enum.Parse(typeof(TIPO_OPERACION), row["Operacion"].ToString());
                         hist.SnapshotData = row["Snapshot_Data"].ToString();
+                      
                         hist.DVH = row["DVH"].ToString();
                         lista.Add(hist);
                     }
@@ -143,6 +144,7 @@ namespace DAL
                         hist.Operacion = (TIPO_OPERACION)Enum.Parse(typeof(TIPO_OPERACION), row["Operacion"].ToString());
 
                         hist.SnapshotData = row["Snapshot_Data"].ToString();
+                        hist.DVH = row["DVH"].ToString();
 
                         lista.Add(hist);
                     }

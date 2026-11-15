@@ -16,6 +16,18 @@ namespace BE
         ASIGNACION_ROLES,
         ACCESO_FALLIDO,
         BLOQUEO_CUENTA,
-        MODIFICACION
+        MODIFICACION,
+        // RF2 - Gestión de Clases y Packs
+        PACK_CREADO,
+        PACK_MODIFICADO,
+        PACK_DESACTIVADO,
+        COMPRA_REGISTRADA,
+        // CU-04 Cambiar de idioma
+        CAMBIO_IDIOMA,
+        // A03 - Serialización
+        SERIALIZACION,
+        DESERIALIZACION,
+        // Tercera entrega - Control de cambios de PACK
+        PACK_VERSION_ACTIVADA
     }
 }

@@ -1,0 +1,180 @@
+sequenceDiagram
+    actor E as Administrador
+    participant M as frmMenu
+    participant F as frmPacks
+    participant BP as BLL_PACK
+    participant SS as SINGLETON_SESION
+    participant BB as BLL_BITACORA
+    participant GI as GESTOR_INTEGRIDAD
+    participant EN as ENCRIPTADOR
+    participant BDV as BLL_DIGITO_VERIFICADOR
+    participant DP as DAL_PACK
+    participant DB2 as DAL_BITACORA
+    participant DDV as DAL_DIGITO_VERIFICADOR
+    participant AC as ACCESO
+    E->>M: Click en "Compra de Clases > Configurar packs" (packsToolStripMenuItem_Click)
+    M->>F: NEW frmPacks()
+    F->>F: InitializeComponent()
+    F->>BP: NEW BLL_PACK()
+    BP-->>F: bllPack
+    F-->>M: formulario creado
+    M->>M: Navegar(form, "ADMIN_PACKS", true) → NAVEGACION_HELPER.Redirigir → ValidarPermiso("ADMIN_PACKS")
+    M->>F: Show()
+    F->>F: OnLoad(e)
+    F->>F: ConfigurarColumnasGrilla_626CV()
+    F->>F: CargarPacks_626CV()
+    F->>BP: ListarTodos_626CV()
+    BP->>DP: ListarTodos_626CV()
+    Note over AC: En cada acceso la DAL hace NEW ACCESO(), Abrir(), CrearParametro() por cada parámetro y, al final, Cerrar()
+    DP->>AC: Leer("SP_PACK_LISTAR_626CV")
+    AC-->>DP: DataTable
+    DP->>DP: por cada fila: NEW PACK
+    DP-->>BP: List<PACK>
+    BP-->>F: List<PACK>
+    F->>F: por cada pack: dgvPacks.Rows.Add(Id, Nombre, Clases, Precio lista, Descuento, CalcularPrecioFinal_626CV(), ObtenerDescripcionEstado_626CV()) (gris si está desactivado)
+    F->>F: PrepararNuevoPack_626CV() (packSeleccionado = null, campos vacíos, descuento 0, lblModo = "Nuevo pack")
+    F-->>M: formulario visible
+    M->>M: Close()
+    M-->>E: Muestra la pantalla Packs de clases con la grilla de packs
+    E->>F: Click en "Nuevo" (btnNuevo_626CV_Click)
+    F->>F: PrepararNuevoPack_626CV() / txtNombre.Focus()
+    F-->>E: Campos vacíos y "Nuevo pack"
+    E->>F: Escribe el nombre (txtNombre_626CV)
+    F-->>E: Muestra el nombre escrito
+    E->>F: Escribe la cantidad de clases (txtCantidadClases_626CV)
+    F-->>E: Muestra la cantidad escrita
+    E->>F: Escribe el precio de lista (txtPrecioLista_626CV)
+    F->>F: txtPrecioODescuento_626CV_TextChanged() → TryParseDecimal_626CV(precio) y TryParseDecimal_626CV(descuento)
+    alt precio > 0 y descuento entre 0 y 100
+        F->>F: NEW PACK {PrecioLista, PorcentajeDescuento} → CalcularPrecioFinal_626CV()
+        F-->>E: Muestra "Precio final: $ X"
+    else Valores incompletos o fuera de rango
+        F-->>E: Muestra "Precio final: -"
+    end
+    E->>F: Escribe el porcentaje de descuento (txtDescuento_626CV)
+    F->>F: txtPrecioODescuento_626CV_TextChanged() → TryParseDecimal_626CV(precio) y TryParseDecimal_626CV(descuento)
+    alt precio > 0 y descuento entre 0 y 100
+        F->>F: NEW PACK {PrecioLista, PorcentajeDescuento} → CalcularPrecioFinal_626CV()
+        F-->>E: Muestra "Precio final: $ X"
+    else Valores incompletos o fuera de rango
+        F-->>E: Muestra "Precio final: -"
+    end
+    E->>F: Click en "Guardar" (btnGuardar_626CV_Click)
+    alt Algún campo vacío
+        F-->>E: MessageBox "Debe completar todos los campos."
+    else int.TryParse(cantidad) o TryParseDecimal_626CV(precio / descuento) falla
+        F-->>E: MessageBox "La cantidad de clases y el precio de lista deben ser mayores a cero, y el descuento debe estar entre 0 y 100."
+    else Datos cargados
+        F->>F: esNuevo = packSeleccionado == null (true: alta)
+        F->>F: NEW PACK(nombre, cantidad, precioLista, descuento)
+        F->>BP: CrearPack_626CV(pack)
+        BP->>BP: ValidarPack_626CV(pack)
+        alt Nombre vacío
+            BP-->>F: "Debe completar todos los campos."
+            F-->>E: MessageBox (mensaje, "Packs")
+        else Nombre de más de 50 caracteres
+            BP-->>F: "El nombre del pack no puede superar los 50 caracteres."
+            F-->>E: MessageBox (mensaje, "Packs")
+        else Cantidad o precio <= 0, o descuento fuera de 0 a 100
+            BP-->>F: "La cantidad de clases y el precio de lista deben ser mayores a cero, y el descuento debe estar entre 0 y 100."
+            F-->>E: MessageBox (mensaje, "Packs")
+        else Pack válido
+            BP->>BP: pack.Nombre = Nombre.Trim()
+            BP->>DP: InsertarPack_626CV(pack, out idPack)
+            DP->>AC: Leer("SP_PACK_INS_626CV", parametros)
+            AC-->>DP: DataTable (Resultado, IdPack)
+            Note over AC: El SP rechaza el nombre repetido (-1) o inserta el pack ACTIVO y devuelve su Id
+            DP->>DP: resultado = Resultado (-99 si no hubo filas)
+            DP-->>BP: resultado, idPack
+            alt resultado == 1
+                BP->>BP: ActualizarDVHYDVVPack_626CV(idPack)
+                BP->>DP: ObtenerPorId_626CV(idPack)
+                DP->>AC: Leer("SP_PACK_OBTENER_POR_ID_626CV", parametros)
+                AC-->>DP: DataTable
+                DP->>DP: NEW PACK
+                DP-->>BP: pack
+                alt pack != null
+                    BP->>GI: CalcularDVH(pack)
+                    GI->>EN: Encriptar(stringBase)
+                    EN-->>GI: hash SHA-256
+                    GI-->>BP: dvh
+                    BP->>DP: ActualizarDVH_626CV(pack)
+                    DP->>AC: Escribir("SP_PACK_UPD_DVH_626CV", parametros)
+                    AC-->>DP: filas afectadas
+                    DP-->>BP: filas
+                end
+                BP->>BP: ListarOrdenadosPorId_626CV()
+                BP->>DP: ListarTodos_626CV()
+                DP->>AC: Leer("SP_PACK_LISTAR_626CV")
+                AC-->>DP: DataTable
+                DP->>DP: por cada fila: NEW PACK
+                DP-->>BP: List<PACK>
+                BP->>BP: OrderBy(Id)
+                BP->>GI: CalcularDVV(listaPacks)
+                GI->>EN: Encriptar(concatenación de los DVH)
+                EN-->>GI: hash SHA-256
+                GI-->>BP: dvv
+                BP->>BDV: NEW BLL_DIGITO_VERIFICADOR().ActualizarDVV(NEW DIGITO_VERIFICADOR {Tabla = "PACK", DVV = dvv})
+                BDV->>DDV: ActualizarDVV(dv)
+                DDV->>AC: Escribir("SP_DIGITO_VERIFICADOR_UPD", parametros)
+                AC-->>DDV: filas afectadas
+                DDV-->>BDV: void
+                BDV-->>BP: void
+                BP->>BP: RegistrarBitacora_626CV(PACK_CREADO, "Pack: " + nombre) (recorta a 50 caracteres)
+                BP->>SS: GetInstance().usuario
+                SS-->>BP: usuario logueado
+                BP->>BP: NEW BITACORA(usuario, DateTime.Now, PACK_CREADO, observación)
+                BP->>BB: NEW BLL_BITACORA()
+                BB-->>BP: bllBitacora
+                BP->>BB: Insertar(bitacora)
+                BB->>BB: FechaHora sin milisegundos
+                BB->>DB2: Insertar(bitacora)
+                DB2->>DB2: idUsuario = bitacora.Usuario.Id
+                DB2->>AC: LeerEscalar("SP_BITACORA_INS", parametros)
+                AC-->>DB2: nuevoId
+                DB2-->>BB: nuevoId
+                alt nuevoId > 0
+                    BB->>BB: bitacora.Id = nuevoId
+                    BB->>GI: CalcularDVH(bitacora)
+                    GI->>EN: Encriptar(stringBase)
+                    EN-->>GI: hash SHA-256
+                    GI-->>BB: dvh
+                    BB->>DB2: ActualizarDVH(bitacora)
+                    DB2->>AC: Escribir("SP_BITACORA_ACTUALIZAR_DVH", parametros)
+                    AC-->>DB2: filas afectadas
+                    DB2-->>BB: filas
+                    BB->>BB: ActualizarDVVTabla()
+                    BB->>DB2: Listar()
+                    DB2->>AC: Leer("SP_BITACORA_LISTAR")
+                    AC-->>DB2: SqlDataReader
+                    DB2->>DB2: por cada fila: NEW BITACORA
+                    DB2-->>BB: List<BITACORA>
+                    BB->>GI: CalcularDVV(listaBitacora)
+                    GI->>EN: Encriptar(concatenación de los DVH)
+                    EN-->>GI: hash SHA-256
+                    GI-->>BB: dvv
+                    BB->>BDV: NEW BLL_DIGITO_VERIFICADOR().ActualizarDVV(NEW DIGITO_VERIFICADOR {Tabla = "BITACORA", DVV = dvv})
+                    BDV->>DDV: ActualizarDVV(dv)
+                    DDV->>AC: Escribir("SP_DIGITO_VERIFICADOR_UPD", parametros)
+                    AC-->>DDV: filas afectadas
+                    DDV-->>BDV: void
+                    BDV-->>BB: void
+                end
+                BB-->>BP: nuevoId
+                BP-->>F: null (éxito)
+                F-->>E: MessageBox "Pack creado correctamente."
+                F->>F: CargarPacks_626CV()
+                F->>BP: ListarTodos_626CV()
+                BP-->>F: List<PACK>
+                F->>F: por cada pack: dgvPacks.Rows.Add(...)
+                F->>F: PrepararNuevoPack_626CV()
+                F-->>E: Grilla actualizada con el pack nuevo y campos limpios
+            else resultado == -1
+                BP-->>F: "Ya existe un pack con el nombre ingresado."
+                F-->>E: MessageBox (mensaje, "Packs")
+            else otro (-99)
+                BP-->>F: "No se pudo crear el pack. Intente nuevamente."
+                F-->>E: MessageBox (mensaje, "Packs")
+            end
+        end
+    end

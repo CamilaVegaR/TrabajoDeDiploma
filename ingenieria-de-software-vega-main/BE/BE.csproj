@@ -46,16 +46,25 @@
   <ItemGroup>
     <Compile Include="BITACORA.cs" />
     <Compile Include="BITACORA_ACTIVIDAD_ENUM.cs" />
+    <Compile Include="CANAL_CONTACTO_ENUM.cs" />
+    <Compile Include="CLIENTE.cs" />
     <Compile Include="Componente.cs" />
+    <Compile Include="COMPRA.cs" />
     <Compile Include="DIGITO_VERIFICADOR.cs" />
+    <Compile Include="ESTADO_RESERVA_ENUM.cs" />
     <Compile Include="ETIQUETA.cs" />
     <Compile Include="Familia.cs" />
+    <Compile Include="HORARIO_CLASE.cs" />
     <Compile Include="IDIOMA.cs" />
     <Compile Include="IIntegrable.cs" />
     <Compile Include="IObserverIdioma.cs" />
     <Compile Include="ISubjectIdioma.cs" />
+    <Compile Include="PACK.cs" />
+    <Compile Include="PACK_C.cs" />
     <Compile Include="Patente.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reportes.cs" />
+    <Compile Include="RESERVA.cs" />
     <Compile Include="SEXO_ENUM.cs" />
     <Compile Include="TIPO_OPERACION.cs" />
     <Compile Include="Traduccion.cs" />
@@ -64,6 +73,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram1.cd" />
+    <None Include="ClassDiagram2.cd" />
+    <None Include="ClassDiagram3.cd" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

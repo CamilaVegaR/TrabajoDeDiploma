@@ -1,0 +1,154 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="BE.BITACORA" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="5.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACBgAAAAAAAAAAAAAAIAAAACAAAAQAAQAEAAAAAgY=</HashCode>
+      <FileName>BITACORA.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="BE.Componente" Collapsed="true">
+    <Position X="1.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAQACAAAAAAAAEAgAAAAAgAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Componente.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="BE.DIGITO_VERIFICADOR" Collapsed="true">
+    <Position X="7" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>DIGITO_VERIFICADOR.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BE.ETIQUETA" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="8.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAIAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAEAA=</HashCode>
+      <FileName>ETIQUETA.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="BE.Familia" Collapsed="true">
+    <Position X="0.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQADAAAAAAAAEAAAAAAAgAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>Familia.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BE.IDIOMA" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="5.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAACAAAAAAAAAAAAgAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>IDIOMA.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="BE.Patente" Collapsed="true">
+    <Position X="2.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Patente.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BE.TRADUCCION" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="7" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAABAAAAAAAAQAAAAAAAQAAAAAAEAA=</HashCode>
+      <FileName>Traduccion.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="BE.USUARIO" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="8.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAISAgAKkgIACgAAAAAAAAAAgAYAAIgCAAgI=</HashCode>
+      <FileName>USUARIO.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="BE.USUARIO_HISTORIAL" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="5.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAQiAAAGAAAAAgAAAAIAAAACABAAAAAQEAAAABAAI=</HashCode>
+      <FileName>USUARIO_HISTORIAL.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="BE.CLIENTE">
+    <Position X="2.75" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABACBAAIAQQAAAAAAAAAQAAIAEAACAAQAIgBAACQA=</HashCode>
+      <FileName>CLIENTE.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="BE.HORARIO_CLASE">
+    <Position X="0.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAABAgAAAQCAAIAAgACAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>HORARIO_CLASE.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="BE.RESERVA">
+    <Position X="4.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAABAAAAAQEAAAAAAARAgAAEAIAAAAQAAABAIQAA=</HashCode>
+      <FileName>RESERVA.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="BE.IIntegrable" Collapsed="true">
+    <Position X="5.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>IIntegrable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="BE.IOBSERVER_IDIOMA" Collapsed="true">
+    <Position X="7" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IObserverIdioma.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="BE.ISUBJECT_IDIOMA" Collapsed="true">
+    <Position X="8.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAACAAA=</HashCode>
+      <FileName>ISubjectIdioma.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="BE.BITACORA_ACTIVIDAD_ENUM" Collapsed="true">
+    <Position X="5.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABBAQABBAEAAAAAAAAAAAAIAACAAIAAAAACAAAAA=</HashCode>
+      <FileName>BITACORA_ACTIVIDAD_ENUM.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="BE.SEXO_ENUM" Collapsed="true">
+    <Position X="7" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAgABA=</HashCode>
+      <FileName>SEXO_ENUM.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="BE.TIPO_OPERACION" Collapsed="true">
+    <Position X="8.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAACAAgAAAACABAAAA=</HashCode>
+      <FileName>TIPO_OPERACION.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="BE.ESTADO_RESERVA_ENUM">
+    <Position X="0.75" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAIAAAAAAAAAAAAACAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ESTADO_RESERVA_ENUM.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

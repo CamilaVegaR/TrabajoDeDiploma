@@ -1,0 +1,223 @@
+sequenceDiagram
+    actor E as Empleado
+    participant M as frmMenu
+    participant F as frmAgendarReserva
+    participant BCL as BLL_CLIENTE
+    participant BH as BLL_HORARIO_CLASE
+    participant BR as BLL_RESERVA
+    participant GI as GESTOR_INTEGRIDAD
+    participant EN as ENCRIPTADOR
+    participant BDV as BLL_DIGITO_VERIFICADOR
+    participant DCL as DAL_CLIENTE
+    participant DH as DAL_HORARIO_CLASE
+    participant DR as DAL_RESERVA
+    participant DDV as DAL_DIGITO_VERIFICADOR
+    participant AC as ACCESO
+
+    E->>M: Click en "Agendar reserva" (agendarReservaToolStripMenuItem_Click)
+    M->>F: NEW frmAgendarReserva()
+    F->>F: InitializeComponent()
+    F->>BR: NEW BLL_RESERVA()
+    BR-->>F: bllReserva
+    F->>BCL: NEW BLL_CLIENTE()
+    BCL-->>F: bllCliente
+    F->>BH: NEW BLL_HORARIO_CLASE()
+    BH-->>F: bllHorario
+    F-->>M: formulario creado
+    M->>M: Navegar(form, null, true) → NAVEGACION_HELPER.Redirigir
+    M->>F: Show()
+    F->>F: OnLoad(e)
+    F->>F: ConfigurarColumnasGrilla_626CV()
+    F->>F: CargarCanalesContacto_626CV() (Presencial, Telefónico, Redes sociales)
+    F->>F: CargarHorarios_626CV()
+    F->>BH: ListarHorarios_626CV()
+    BH->>DH: ListarHorarios_626CV()
+    Note over AC: En cada acceso la DAL hace NEW ACCESO(), Abrir(), CrearParametro() por cada parámetro y, al final, Cerrar()
+    DH->>AC: Leer("SP_HORARIO_CLASE_LISTAR_626CV")
+    AC-->>DH: SqlDataReader
+    DH->>DH: por cada fila: NEW HORARIO_CLASE
+    DH-->>BH: List<HORARIO_CLASE>
+    BH-->>F: List<HORARIO_CLASE>
+    F->>F: cmbHorario.DataSource = lista
+    F->>F: LimpiarCliente_626CV() (clienteActual = null, panel oculto, grilla vacía)
+    F->>F: ActualizarCupoDisponible_626CV()
+    F->>BH: ConsultarCupoDisponible_626CV(idHorario, fecha, out max, out ocupado)
+    BH->>DH: ConsultarCupoDisponible_626CV(idHorario, fecha, out max, out ocupado)
+    DH->>AC: Leer("SP_HORARIO_CLASE_CONSULTAR_CUPO_626CV", parametros)
+    AC-->>DH: DataTable (CUPO_MAXIMO, CUPO_OCUPADO)
+    DH->>DH: hayCupo = ocupado < máximo
+    DH-->>BH: hayCupo, máximo, ocupado
+    BH-->>F: hayCupo, máximo, ocupado
+    F->>F: lblCupo.Text = "Cupo: ocupado/máximo" (verde si hay cupo, rojo si no)
+    F-->>M: formulario visible
+    M->>M: Close()
+    M-->>E: Muestra la pantalla Agendar Reserva (el menú se cierra)
+    E->>F: Escribe el DNI del cliente (txtDni_626CV)
+    F-->>E: Muestra el DNI escrito
+    E->>F: Click en "Buscar" (btnBuscarCliente_626CV_Click)
+    alt DNI vacío
+        F-->>E: MessageBox "Ingrese un DNI para buscar."
+    else DNI ingresado
+        F->>BCL: ObtenerPorDni_626CV(txtDni.Trim())
+        BCL->>DCL: ObtenerPorDni_626CV(dni)
+        DCL->>AC: Leer("SP_CLIENTE_OBTENER_POR_DNI_626CV", parametros)
+        AC-->>DCL: DataTable
+        alt Hay fila
+            DCL->>DCL: NEW CLIENTE (con SaldoClases)
+        end
+        DCL-->>BCL: CLIENTE / null
+        BCL-->>F: CLIENTE / null
+        F->>F: clienteActual = resultado
+        alt clienteActual == null
+            F->>F: lblClienteEncontrado = "Cliente no encontrado. Complete los datos para registrarlo."
+            F->>F: pnlClienteNuevo.Visible = true / dgvReservas.DataSource = null
+            F-->>E: Muestra el panel de cliente nuevo
+            E->>F: Completa nombre, apellido, teléfono y email y click en "Registrar cliente" (btnRegistrarCliente_626CV_Click)
+            Note over F,BCL: extend CU02 - Registrar Cliente_626CV: valida nombre y apellido y llama a BLL_CLIENTE.RegistrarCliente_626CV (detalle en su diagrama)
+            F->>BCL: RegistrarCliente_626CV(nuevo)
+            BCL-->>F: CLIENTE registrado
+            F->>F: clienteActual = cliente / pnlClienteNuevo.Visible = false / CargarReservasCliente_626CV()
+            F-->>E: MessageBox "Cliente registrado correctamente." y muestra "Cliente: Nombre Apellido — Saldo: 0 clase(s)"
+        else clienteActual != null (include CU03)
+            F->>F: lblClienteEncontrado = "Cliente: Nombre Apellido — Saldo: N clase(s)"
+            F->>F: pnlClienteNuevo.Visible = false
+            F->>F: CargarReservasCliente_626CV() (dgvReservas.Rows.Clear())
+            F->>BR: ListarPorClienteDetalle_626CV(idCliente)
+            BR->>DR: ListarPorClienteDetalle_626CV(idCliente)
+            DR->>AC: Leer("SP_RESERVA_LISTAR_POR_CLIENTE_DETALLE_626CV", parametros)
+            AC-->>DR: DataTable
+            DR->>DR: por cada fila: NEW RESERVA (con NEW CLIENTE y NEW HORARIO_CLASE)
+            DR-->>BR: List<RESERVA>
+            BR-->>F: List<RESERVA>
+            F->>F: por cada reserva: dgvReservas.Rows.Add(Id, ObtenerDescripcionHorario_626CV(), ObtenerDescripcionFechaClase_626CV(), ObtenerDescripcionEstado_626CV())
+            F-->>E: Muestra el cliente, su saldo y sus reservas
+        end
+    end
+    E->>F: Selecciona el horario (cmbHorario_626CV_SelectedIndexChanged)
+    F->>F: ActualizarCupoDisponible_626CV() (include CU04)
+    F->>BH: ConsultarCupoDisponible_626CV(idHorario, fecha, out max, out ocupado)
+    BH-->>F: hayCupo, máximo, ocupado
+    F->>F: lblCupo.Text = "Cupo: ocupado/máximo" (verde o rojo)
+    F-->>E: Muestra "Cupo: ocupado/máximo" del horario elegido
+    E->>F: Selecciona la fecha de la clase (dtpFechaClase_626CV_ValueChanged)
+    F->>F: ActualizarCupoDisponible_626CV() (include CU04)
+    F->>BH: ConsultarCupoDisponible_626CV(idHorario, fecha, out max, out ocupado)
+    BH-->>F: hayCupo, máximo, ocupado
+    F->>F: lblCupo.Text = "Cupo: ocupado/máximo" (verde o rojo)
+    F-->>E: Muestra "Cupo: ocupado/máximo" para esa fecha
+    E->>F: Selecciona el canal de contacto (cmbCanalContacto_626CV)
+    F-->>E: Muestra el canal elegido
+    E->>F: Click en "Agendar" (btnAgendar_626CV_Click)
+    alt clienteActual == null
+        F-->>E: MessageBox "Debe buscar o registrar un cliente primero."
+    else Cliente cargado
+        F->>F: horario = (HORARIO_CLASE)cmbHorario.SelectedItem / fecha = dtpFechaClase.Value.Date
+        F->>F: ValidarDiaCoincideConFecha_626CV(horario, fecha)
+        alt fecha.DayOfWeek != horario.Dia
+            F->>F: HORARIO_CLASE.TraducirDia_626CV(horario.Dia)
+            F-->>E: MessageBox "La fecha elegida (dd/MM/yyyy) no es un [día]. Elija una fecha que coincida con el día del horario."
+        else Día correcto
+            F->>F: ObtenerCanalContactoSeleccionado_626CV()
+            F->>BR: AgendarReserva_626CV(clienteActual, horario, fecha, canal)
+            alt cliente == null o horario == null
+                BR-->>F: "Debe seleccionar un cliente y un horario."
+                F-->>E: MessageBox (mensaje, "No se pudo agendar")
+            else Datos completos
+                BR->>BR: NEW RESERVA(cliente, horario, fecha, canal)
+                BR->>DR: InsertarReserva_626CV(nueva, out idReserva)
+                DR->>AC: Leer("SP_RESERVA_INS_626CV", parametros)
+                AC-->>DR: DataTable (Resultado, IdReserva)
+                Note over AC: El SP, en una transacción, valida saldo (-1), cupo (-2) y duplicado (-3), inserta la reserva ACTIVA y descuenta 1 clase del saldo
+                DR->>DR: resultado = Resultado (-99 si no hubo filas)
+                DR-->>BR: resultado, idReserva
+                alt resultado == 1
+                    BR->>DR: ObtenerPorId_626CV(idReserva)
+                    DR->>AC: Leer("SP_RESERVA_OBTENER_POR_ID_626CV", parametros)
+                    AC-->>DR: DataTable
+                    DR->>DR: NEW RESERVA
+                    DR-->>BR: reservaCreada
+                    BR->>GI: CalcularDVH(reservaCreada)
+                    GI->>EN: Encriptar(stringBase)
+                    EN-->>GI: hash SHA-256
+                    GI-->>BR: dvh
+                    BR->>DR: ActualizarDVH_626CV(reservaCreada)
+                    DR->>AC: Escribir("SP_RESERVA_UPD_DVH_626CV", parametros)
+                    AC-->>DR: filas afectadas
+                    DR-->>BR: filas
+                    BR->>BR: ActualizarDVVReserva_626CV()
+                    BR->>DR: ListarTodas_626CV()
+                    DR->>AC: Leer("SP_RESERVA_LISTAR_TODAS_626CV")
+                    AC-->>DR: SqlDataReader
+                    DR->>DR: por cada fila: NEW RESERVA
+                    DR-->>BR: List<RESERVA>
+                    BR->>GI: CalcularDVV(listaReservas)
+                    GI->>EN: Encriptar(concatenación de los DVH)
+                    EN-->>GI: hash SHA-256
+                    GI-->>BR: dvv
+                    BR->>BDV: ActualizarDVV(NEW DIGITO_VERIFICADOR {Tabla = "RESERVA", DVV = dvv})
+                    BDV->>DDV: ActualizarDVV(dv)
+                    DDV->>AC: Escribir("SP_DIGITO_VERIFICADOR_UPD", parametros)
+                    AC-->>DDV: filas afectadas
+                    DDV-->>BDV: void
+                    BDV-->>BR: void
+                    BR->>BR: ActualizarDVHYDVVCliente_626CV(idCliente)
+                    BR->>DCL: ObtenerPorId_626CV(idCliente)
+                    DCL->>AC: Leer("SP_CLIENTE_OBTENER_POR_ID_626CV", parametros)
+                    AC-->>DCL: DataTable
+                    DCL->>DCL: NEW CLIENTE
+                    DCL-->>BR: CLIENTE (saldo ya descontado)
+                    BR->>GI: CalcularDVH(cliente)
+                    GI->>EN: Encriptar(stringBase)
+                    EN-->>GI: hash SHA-256
+                    GI-->>BR: dvh
+                    BR->>DCL: ActualizarDVH_626CV(cliente)
+                    DCL->>AC: Escribir("SP_CLIENTE_UPD_DVH_626CV", parametros)
+                    AC-->>DCL: filas afectadas
+                    DCL-->>BR: filas
+                    BR->>DCL: ListarClientes_626CV()
+                    DCL->>AC: Leer("SP_CLIENTE_LISTAR_626CV")
+                    AC-->>DCL: SqlDataReader
+                    DCL->>DCL: por cada fila: NEW CLIENTE
+                    DCL-->>BR: List<CLIENTE>
+                    BR->>GI: CalcularDVV(listaClientes)
+                    GI->>EN: Encriptar(concatenación de los DVH)
+                    EN-->>GI: hash SHA-256
+                    GI-->>BR: dvv
+                    BR->>BDV: ActualizarDVV(NEW DIGITO_VERIFICADOR {Tabla = "CLIENTE", DVV = dvv})
+                    BDV->>DDV: ActualizarDVV(dv)
+                    DDV->>AC: Escribir("SP_DIGITO_VERIFICADOR_UPD", parametros)
+                    AC-->>DDV: filas afectadas
+                    DDV-->>BDV: void
+                    BDV-->>BR: void
+                    BR-->>F: null (éxito)
+                    Note over F,BR: Refresco de pantalla: mismos métodos que arriba, sin volver a abrir BLL y DAL
+                    F->>BCL: ObtenerPorId_626CV(clienteActual.Id)
+                    BCL-->>F: CLIENTE (saldo actualizado)
+                    F->>F: clienteActual = cliente
+                    F->>F: lblClienteEncontrado = "Cliente: Nombre Apellido — Saldo: N clase(s)"
+                    F->>F: ActualizarCupoDisponible_626CV()
+                    F->>BH: ConsultarCupoDisponible_626CV(idHorario, fecha, out max, out ocupado)
+                    BH-->>F: hayCupo, máximo, ocupado
+                    F->>F: lblCupo.Text = "Cupo: ocupado/máximo"
+                    F-->>E: MessageBox "Reserva agendada correctamente. Saldo restante: N clase(s). Cupo: X/Y."
+                    F->>F: CargarReservasCliente_626CV()
+                    F->>BR: ListarPorClienteDetalle_626CV(idCliente)
+                    BR-->>F: List<RESERVA>
+                    F->>F: por cada reserva: dgvReservas.Rows.Add(...)
+                    F-->>E: Grilla de reservas actualizada
+                else resultado == -1
+                    BR-->>F: "El cliente no tiene clases disponibles."
+                    F-->>E: MessageBox (mensaje, "No se pudo agendar")
+                else resultado == -2
+                    BR-->>F: "El horario seleccionado no tiene cupo disponible."
+                    F-->>E: MessageBox (mensaje, "No se pudo agendar")
+                else resultado == -3
+                    BR-->>F: "El cliente ya tiene una reserva activa para ese horario y esa fecha."
+                    F-->>E: MessageBox (mensaje, "No se pudo agendar")
+                else otro (-99)
+                    BR-->>F: "No se pudo agendar la reserva. Intente nuevamente."
+                    F-->>E: MessageBox (mensaje, "No se pudo agendar")
+                end
+            end
+        end
+    end

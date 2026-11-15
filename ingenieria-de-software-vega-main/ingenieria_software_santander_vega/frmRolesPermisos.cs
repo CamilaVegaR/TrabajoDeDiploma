@@ -228,6 +228,8 @@ namespace ingenieria_software_santander_vega
 
                 familiaDestino.Agregar(compAAgregar);
                 bllRolesPermisos.GuardarFamilia(familiaDestino);
+                RegistrarBitacora(BE.BITACORA_ACTIVIDAD_ENUM.ASIGNACION_PERMISOS,
+    "Familia " + familiaDestino.Nombre + ": se agregó " + compAAgregar.Nombre);
 
                 CargarDatosIniciales();
 
@@ -259,6 +261,8 @@ namespace ingenieria_software_santander_vega
 
                     familiaDestino.Remover(compAQuitar);
                     bllRolesPermisos.GuardarFamilia(familiaDestino);
+                    RegistrarBitacora(BE.BITACORA_ACTIVIDAD_ENUM.ASIGNACION_PERMISOS,
+    "Familia " + familiaDestino.Nombre + ": se quitó " + compAQuitar.Nombre);
 
                     CargarDatosIniciales();
 
@@ -321,6 +325,8 @@ namespace ingenieria_software_santander_vega
                 usrSel.Permisos.Add(rolAAgregar);
 
                 bllRolesPermisos.GuardarPermisosUsuario(usrSel);
+                RegistrarBitacora(BE.BITACORA_ACTIVIDAD_ENUM.ASIGNACION_ROLES,
+    "Usuario " + usrSel.NombreUsuario + ": se asignó " + rolAAgregar.Nombre);
 
                 bllRolesPermisos.CargarPermisosUsuario(usrSel);
 
@@ -348,6 +354,8 @@ namespace ingenieria_software_santander_vega
                     usrSel.Permisos.Remove(itemToRemove);
 
                     bllRolesPermisos.GuardarPermisosUsuario(usrSel);
+                    RegistrarBitacora(BE.BITACORA_ACTIVIDAD_ENUM.ASIGNACION_ROLES,
+    "Usuario " + usrSel.NombreUsuario + ": se desasignó " + itemToRemove.Nombre);
 
                     bllRolesPermisos.CargarPermisosUsuario(usrSel);
 
@@ -360,7 +368,20 @@ namespace ingenieria_software_santander_vega
                 MessageBox.Show("Seleccione un Rol o Permiso principal del árbol del usuario para desasignarlo.");
             }
         }
-
+        
+        private void RegistrarBitacora(BE.BITACORA_ACTIVIDAD_ENUM actividad, string observacion)
+        {
+            try
+            {
+                BE.BITACORA bitacora = new BE.BITACORA(Servicios.SINGLETON_SESION.GetInstance().usuario, DateTime.Now, actividad, observacion);
+                if (new BLL_BITACORA().Insertar(bitacora) == -1)
+                    MessageBox.Show("El cambio se guardó, pero no se pudo registrar en la bitácora.", "Bitácora", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            catch
+            {
+                MessageBox.Show("El cambio se guardó, pero no se pudo registrar en la bitácora.", "Bitácora", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
         private string MostrarDialogoInput(string titulo, string texto)
         {
             Form prompt = new Form()
@@ -463,5 +484,7 @@ namespace ingenieria_software_santander_vega
         {
             Navegar(new frmMenu(), null, true);
         }
+
+
     }
 }

@@ -13,11 +13,11 @@ namespace BLL
             return mapperEtiquetas.ListarEtiquetas();
         }
 
-        public void InsertarEtiqueta(BE.ETIQUETA etiqueta)
+        public void InsertarEtiqueta(BE.ETIQUETA etiqueta, string textoPorDefecto = null)
         {
             if (etiqueta != null && !string.IsNullOrWhiteSpace(etiqueta.Formulario) && !string.IsNullOrWhiteSpace(etiqueta.Clave))
             {
-                int id = mapperEtiquetas.InsertarEtiqueta(etiqueta);
+                int id = mapperEtiquetas.InsertarEtiqueta(etiqueta, textoPorDefecto);
                 BE.ETIQUETA etiquetaInsertada = mapperEtiquetas.ObtenerPorId(id);
                 etiquetaInsertada.DVH = Servicios.GESTOR_INTEGRIDAD.CalcularDVH(etiquetaInsertada);
                 mapperEtiquetas.ActualizarDHV(etiquetaInsertada);

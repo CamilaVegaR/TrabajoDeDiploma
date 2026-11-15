@@ -56,11 +56,32 @@
     <Compile Include="FORM_BASE.Designer.cs">
       <DependentUpon>FORM_BASE.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmAgendarReserva.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmAgendarReserva.Designer.cs">
+      <DependentUpon>frmAgendarReserva.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmAyuda.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="frmBitacora.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="frmBitacora.Designer.cs">
       <DependentUpon>frmBitacora.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmCompras.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmCompras.Designer.cs">
+      <DependentUpon>frmCompras.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmControlCambiosPack.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmControlCambiosPack.Designer.cs">
+      <DependentUpon>frmControlCambiosPack.cs</DependentUpon>
     </Compile>
     <Compile Include="frmCrearCuenta.cs">
       <SubType>Form</SubType>
@@ -98,11 +119,29 @@
     <Compile Include="frmMenu.Designer.cs">
       <DependentUpon>frmMenu.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmPacks.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmPacks.Designer.cs">
+      <DependentUpon>frmPacks.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmReportes.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmReportes.Designer.cs">
+      <DependentUpon>frmReportes.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmRolesPermisos.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="frmRolesPermisos.Designer.cs">
       <DependentUpon>frmRolesPermisos.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmSerializacion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmSerializacion.Designer.cs">
+      <DependentUpon>frmSerializacion.cs</DependentUpon>
     </Compile>
     <Compile Include="helpers\NAVEGACION_HELPER.cs" />
     <Compile Include="frmMiCuenta.cs">
@@ -116,6 +155,9 @@
     <Compile Include="helpers\SINCRONIZADOR_IDIOMA.cs" />
     <EmbeddedResource Include="frmAdminUsuario.resx">
       <DependentUpon>frmAdminUsuario.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmAgendarReserva.resx">
+      <DependentUpon>frmAgendarReserva.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmBitacora.resx">
       <DependentUpon>frmBitacora.cs</DependentUpon>
@@ -172,6 +214,10 @@
     <ProjectReference Include="..\BLL\BLL.csproj">
       <Project>{3421448c-0c5a-48ff-8fab-9bbd6258887a}</Project>
       <Name>BLL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DAL\DAL.csproj">
+      <Project>{4f139038-48a8-4af0-9fc0-c32f7e80aa12}</Project>
+      <Name>DAL</Name>
     </ProjectReference>
     <ProjectReference Include="..\Servicios\Servicios.csproj">
       <Project>{aee5f8e4-847f-4e53-9d15-e87ff19b41f9}</Project>

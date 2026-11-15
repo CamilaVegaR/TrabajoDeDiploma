@@ -1,0 +1,145 @@
+sequenceDiagram
+    actor E as Empleado
+    participant F as frmAgendarReserva
+    participant BCL as BLL_CLIENTE
+    participant BH as BLL_HORARIO_CLASE
+    participant BR as BLL_RESERVA
+    participant GI as GESTOR_INTEGRIDAD
+    participant EN as ENCRIPTADOR
+    participant BDV as BLL_DIGITO_VERIFICADOR
+    participant DCL as DAL_CLIENTE
+    participant DH as DAL_HORARIO_CLASE
+    participant DR as DAL_RESERVA
+    participant DDV as DAL_DIGITO_VERIFICADOR
+    participant AC as ACCESO
+    Note over E,F: El empleado está en Agendar Reserva (se abre desde el menú, ver CU01)
+    E->>F: Escribe el DNI y click en "Buscar" (btnBuscarCliente_626CV_Click)
+    Note over F,BR: Búsqueda del cliente a nivel F10 (detalle en CU01 y CU03)
+    F->>BCL: ObtenerPorDni_626CV(txtDni.Trim())
+    BCL-->>F: CLIENTE
+    F->>F: clienteActual = cliente / lblClienteEncontrado = "Cliente: Nombre Apellido — Saldo: N clase(s)"
+    F->>F: CargarReservasCliente_626CV()
+    F->>BR: ListarPorClienteDetalle_626CV(idCliente)
+    BR-->>F: List<RESERVA>
+    F->>F: por cada reserva: dgvReservas.Rows.Add(Id, horario, fecha, estado)
+    F-->>E: Muestra el cliente y la grilla con sus reservas
+    E->>F: Selecciona una reserva de la grilla (dgvReservas_626CV.CurrentRow)
+    F-->>E: Muestra la reserva seleccionada
+    E->>F: Click en "Cancelar reserva" (btnCancelarReserva_626CV_Click)
+    alt dgvReservas.CurrentRow == null
+        F-->>E: MessageBox "Seleccione una reserva de la lista."
+    else Hay una reserva seleccionada
+        F->>F: idReserva = Convert.ToInt32(CurrentRow.Cells["colIdReserva"].Value)
+        F->>BR: CancelarReserva_626CV(idReserva)
+        BR->>DR: ObtenerPorId_626CV(idReserva)
+        Note over AC: En cada acceso la DAL hace NEW ACCESO(), Abrir(), CrearParametro() por cada parámetro y, al final, Cerrar()
+        DR->>AC: Leer("SP_RESERVA_OBTENER_POR_ID_626CV", parametros)
+        AC-->>DR: DataTable
+        alt Hay fila
+            DR->>DR: NEW RESERVA
+        end
+        DR-->>BR: reserva / null
+        alt reserva == null
+            BR-->>F: "La reserva no existe."
+        else reserva.Estado != ACTIVA
+            BR-->>F: "La reserva ya había sido cancelada."
+        else Reserva activa
+            BR->>DH: ObtenerPorId_626CV(reserva.Horario.Id)
+            DH->>AC: Leer("SP_HORARIO_CLASE_OBTENER_POR_ID_626CV", parametros)
+            AC-->>DH: DataTable
+            DH->>DH: NEW HORARIO_CLASE
+            DH-->>BR: horario
+            BR->>BR: fechaHoraClase = reserva.FechaClase.Date + horario.Hora
+            BR->>BR: anticipacion = fechaHoraClase - DateTime.Now
+            BR->>DR: CancelarReserva_626CV(idReserva)
+            DR->>AC: Escribir("SP_RESERVA_CANCELAR_626CV", parametros)
+            AC-->>DR: filas afectadas
+            Note over AC: El SP pone ESTADO_626CV = CANCELADA_626CV solo si la reserva estaba ACTIVA
+            DR-->>BR: filasCanceladas
+            alt filasCanceladas == 0
+                BR-->>F: "La reserva ya había sido cancelada por otro usuario."
+            else Reserva cancelada
+                Note over BR,DR: El estado cambió a CANCELADA: se recalcula el DVH de la reserva antes del DVV
+                BR->>DR: ObtenerPorId_626CV(idReserva)
+                DR->>AC: Leer("SP_RESERVA_OBTENER_POR_ID_626CV", parametros)
+                AC-->>DR: DataTable
+                DR->>DR: NEW RESERVA
+                DR-->>BR: reservaCancelada
+                BR->>GI: CalcularDVH(reservaCancelada)
+                GI->>EN: Encriptar(stringBase)
+                EN-->>GI: hash SHA-256
+                GI-->>BR: dvh
+                BR->>DR: ActualizarDVH_626CV(reservaCancelada)
+                DR->>AC: Escribir("SP_RESERVA_UPD_DVH_626CV", parametros)
+                AC-->>DR: filas afectadas
+                DR-->>BR: filas
+                BR->>BR: ActualizarDVVReserva_626CV()
+                BR->>DR: ListarTodas_626CV()
+                DR->>AC: Leer("SP_RESERVA_LISTAR_TODAS_626CV")
+                AC-->>DR: SqlDataReader
+                DR->>DR: por cada fila: NEW RESERVA
+                DR-->>BR: List<RESERVA>
+                BR->>GI: CalcularDVV(listaReservas)
+                GI->>EN: Encriptar(concatenación de los DVH)
+                EN-->>GI: hash SHA-256
+                GI-->>BR: dvv
+                BR->>BDV: NEW BLL_DIGITO_VERIFICADOR().ActualizarDVV(NEW DIGITO_VERIFICADOR {Tabla = "RESERVA", DVV = dvv})
+                BDV->>DDV: ActualizarDVV(dv)
+                DDV->>AC: Escribir("SP_DIGITO_VERIFICADOR_UPD", parametros)
+                AC-->>DDV: filas afectadas
+                DDV-->>BDV: void
+                BDV-->>BR: void
+                alt anticipacion.TotalHours >= 24
+                    BR->>DCL: ActualizarSaldo_626CV(idCliente, 1)
+                    DCL->>AC: Escribir("SP_CLIENTE_ACTUALIZAR_SALDO_626CV", parametros)
+                    AC-->>DCL: filas afectadas
+                    DCL-->>BR: filas
+                    BR->>BR: ActualizarDVHYDVVCliente_626CV(idCliente)
+                    BR->>DCL: ObtenerPorId_626CV(idCliente)
+                    DCL->>AC: Leer("SP_CLIENTE_OBTENER_POR_ID_626CV", parametros)
+                    AC-->>DCL: DataTable
+                    DCL->>DCL: NEW CLIENTE
+                    DCL-->>BR: CLIENTE (saldo + 1)
+                    BR->>GI: CalcularDVH(cliente)
+                    GI->>EN: Encriptar(stringBase)
+                    EN-->>GI: hash SHA-256
+                    GI-->>BR: dvh
+                    BR->>DCL: ActualizarDVH_626CV(cliente)
+                    DCL->>AC: Escribir("SP_CLIENTE_UPD_DVH_626CV", parametros)
+                    AC-->>DCL: filas afectadas
+                    DCL-->>BR: filas
+                    BR->>DCL: ListarClientes_626CV()
+                    DCL->>AC: Leer("SP_CLIENTE_LISTAR_626CV")
+                    AC-->>DCL: SqlDataReader
+                    DCL->>DCL: por cada fila: NEW CLIENTE
+                    DCL-->>BR: List<CLIENTE>
+                    BR->>GI: CalcularDVV(listaClientes)
+                    GI->>EN: Encriptar(concatenación de los DVH)
+                    EN-->>GI: hash SHA-256
+                    GI-->>BR: dvv
+                    BR->>BDV: NEW BLL_DIGITO_VERIFICADOR().ActualizarDVV(NEW DIGITO_VERIFICADOR {Tabla = "CLIENTE", DVV = dvv})
+                    BDV->>DDV: ActualizarDVV(dv)
+                    DDV->>AC: Escribir("SP_DIGITO_VERIFICADOR_UPD", parametros)
+                    AC-->>DDV: filas afectadas
+                    DDV-->>BDV: void
+                    BDV-->>BR: void
+                    BR-->>F: "Reserva cancelada. La clase fue devuelta al saldo del cliente."
+                else Menos de 24 horas
+                    BR-->>F: "Reserva cancelada. Al ser con menos de 24hs de anticipación, la clase no fue devuelta al saldo."
+                end
+            end
+        end
+        F-->>E: MessageBox (mensaje, "Cancelación de reserva")
+        Note over F,BR: Después del mensaje, en todos los casos refresca la pantalla (a nivel F10)
+        F->>BCL: ObtenerPorId_626CV(clienteActual.Id) (include CU03)
+        BCL-->>F: CLIENTE (saldo actualizado)
+        F->>F: clienteActual = cliente / lblClienteEncontrado = "Cliente: Nombre Apellido — Saldo: N clase(s)"
+        F->>F: ActualizarCupoDisponible_626CV() (include CU04)
+        F->>BH: ConsultarCupoDisponible_626CV(idHorario, fecha, out max, out ocupado)
+        BH-->>F: hayCupo, máximo, ocupado
+        F->>F: CargarReservasCliente_626CV()
+        F->>BR: ListarPorClienteDetalle_626CV(idCliente)
+        BR-->>F: List<RESERVA>
+        F->>F: por cada reserva: dgvReservas.Rows.Add(...) (la cancelada aparece como Cancelada)
+        F-->>E: Muestra el saldo, el cupo y la grilla actualizados
+    end

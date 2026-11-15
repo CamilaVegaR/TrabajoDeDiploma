@@ -180,8 +180,7 @@ namespace ingenieria_software_santander_vega
                     USUARIO usuarioRecompuesto = bllHistorial.RecomponerEstado(snapshotSeleccionado);
 
                     USUARIO adminResponsable = SINGLETON_SESION.GetInstance().usuario;
-
-                    bllUsuario.ModificarUsuario(usuarioRecompuesto, adminResponsable);
+                    bllUsuario.ModificarUsuario(usuarioRecompuesto, adminResponsable, TIPO_OPERACION.RESTAURACION);
 
                     MessageBox.Show($"Restauración exitosa. El usuario volvió a la Versión {snapshotSeleccionado.Version}.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
 

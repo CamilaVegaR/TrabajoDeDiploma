@@ -38,7 +38,7 @@ namespace DAL
             return etiquetas;
         }
 
-        public int InsertarEtiqueta(ETIQUETA etiqueta)
+        public int InsertarEtiqueta(ETIQUETA etiqueta, string textoPorDefecto)
         {
             acceso = new ACCESO();
             acceso.Abrir();
@@ -46,6 +46,7 @@ namespace DAL
 
             parametros.Add(acceso.CrearParametro("@pFormulario", etiqueta.Formulario));
             parametros.Add(acceso.CrearParametro("@pClave", etiqueta.Clave));
+            parametros.Add(acceso.CrearParametro("@pTextoPorDefecto", textoPorDefecto ?? "[Cambiar traducción]"));
 
             int id = acceso.LeerEscalar("SP_ETIQUETA_INS", parametros);
             acceso.Cerrar();

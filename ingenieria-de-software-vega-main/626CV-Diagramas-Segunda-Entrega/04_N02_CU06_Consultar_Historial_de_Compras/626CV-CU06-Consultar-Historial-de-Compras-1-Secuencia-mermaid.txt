@@ -1,0 +1,49 @@
+sequenceDiagram
+    actor E as Empleado
+    participant F as frmCompras
+    participant BCL as BLL_CLIENTE
+    participant BC as BLL_COMPRA
+    participant DC as DAL_COMPRA
+    participant AC as ACCESO
+    Note over E,F: El empleado está en la pantalla Compras (se abre desde el menú, ver CU05)
+    E->>F: Escribe el DNI del cliente (txtDni_626CV)
+    F-->>E: Muestra el DNI escrito
+    E->>F: Click en "Buscar" (btnBuscarCliente_626CV_Click)
+    F->>F: string.IsNullOrWhiteSpace(txtDni.Text)
+    alt DNI vacío
+        F-->>E: MessageBox "Debe ingresar el DNI del cliente."
+    else DNI ingresado
+        Note over F,BCL: include CU03 - Consultar Saldo de Clases_626CV (detalle en su diagrama)
+        F->>BCL: ObtenerPorDni_626CV(txtDni.Trim())
+        BCL-->>F: CLIENTE / null
+        F->>F: clienteActual = resultado
+        alt clienteActual == null
+            F->>F: lblClienteEncontrado = "Cliente no encontrado. Complete los datos para registrarlo."
+            F->>F: pnlClienteNuevo.Visible = true / dgvCompras.Rows.Clear() / lblHistorial = "Historial de compras"
+            F-->>E: Muestra el panel de cliente nuevo con la grilla del historial vacía
+        else Cliente encontrado
+            F->>F: MostrarCliente_626CV(): lblClienteEncontrado = "Cliente: Nombre Apellido — Saldo: N clase(s)"
+            F->>F: pnlClienteNuevo.Visible = false
+            F->>F: CargarHistorial_626CV()
+            F->>F: dgvCompras.Rows.Clear()
+            F->>BC: ListarPorCliente_626CV(clienteActual.Id)
+            BC->>DC: ListarPorCliente_626CV(idCliente)
+            Note over AC: En cada acceso la DAL hace NEW ACCESO(), Abrir(), CrearParametro() por cada parámetro y, al final, Cerrar()
+            DC->>AC: Leer("SP_COMPRA_LISTAR_POR_CLIENTE_626CV", parametros)
+            AC-->>DC: DataTable (compras con NOMBRE_PACK_626CV)
+            Note over AC: El SP une COMPRA con PACK y ordena por FECHA_COMPRA_626CV de la más reciente a la más antigua
+            DC->>DC: NEW List<COMPRA>
+            DC->>DC: por cada fila: MapearCompra_626CV(fila) → NEW COMPRA y compra.Pack.Nombre = NOMBRE_PACK_626CV
+            DC-->>BC: List<COMPRA>
+            BC-->>F: List<COMPRA>
+            alt compras.Count == 0
+                F->>F: lblHistorial = "Historial de compras: el cliente no registra compras."
+                F-->>E: Muestra el saldo del cliente y la grilla vacía con el aviso
+            else Hay compras
+                F->>F: lblHistorial = "Historial de compras"
+                F->>F: por cada compra: ObtenerDescripcionCanal_626CV(canal) → "Presencial" / "Telefónico" / "Redes sociales"
+                F->>F: por cada compra: dgvCompras.Rows.Add(Fecha "dd/MM/yyyy HH:mm", Pack, Clases, Descuento %, Importe $, Canal)
+                F-->>E: Muestra el saldo del cliente y su historial de compras
+            end
+        end
+    end
