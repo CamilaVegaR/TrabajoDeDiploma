@@ -66,6 +66,7 @@
     <TypeIdentifier>
       <HashCode>AAACAAAAAISAgAKkgIACgAAAAAAAAAAgAYAAIgCAAgI=</HashCode>
       <FileName>USUARIO.cs</FileName>
+      <NewMemberFileName>usuario.cs</NewMemberFileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
@@ -88,7 +89,7 @@
   <Class Name="BE.HORARIO_CLASE">
     <Position X="0.75" Y="5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AACAAABAgAAAQCAAIAAgACAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <HashCode>AAKAAABAgAAAQCAEIAAgACAAAAAAAAAAAQAAAAAAAAA=</HashCode>
       <FileName>HORARIO_CLASE.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -96,7 +97,7 @@
   <Class Name="BE.RESERVA">
     <Position X="4.5" Y="5.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAgAAABAAAAAQEAAAAAAARAgAAEAIAAAAQAAABAIQAA=</HashCode>
+      <HashCode>BAgAQABAAAAAQEAAIAAAQRAgAAEEIAAAAQAAABAIQAA=</HashCode>
       <FileName>RESERVA.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -125,7 +126,7 @@
   <Enum Name="BE.BITACORA_ACTIVIDAD_ENUM" Collapsed="true">
     <Position X="5.25" Y="4.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAABBAQABBAEAAAAAAAAAAAAIAACAAIAAAAACAAAAA=</HashCode>
+      <HashCode>AAAABBAQABBAUAQAAAAAAAgAAIBACAEIAAgAACAEAAA=</HashCode>
       <FileName>BITACORA_ACTIVIDAD_ENUM.cs</FileName>
     </TypeIdentifier>
   </Enum>
