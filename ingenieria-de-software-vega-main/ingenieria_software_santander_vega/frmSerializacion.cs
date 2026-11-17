@@ -13,13 +13,11 @@ using System.Windows.Forms;
 
 namespace ingenieria_software_santander_vega
 {
-    // A03 - Serialización y deserialización.
-    // Serializar: guarda los Packs o los Clientes de la base en un archivo XML.
-    // Deserializar: lee un archivo XML, muestra los registros en la grilla y
-    // verifica con el DVH si cada registro fue alterado fuera del sistema.
+
     public partial class frmSerializacion : FORM_BASE
     {
         private BLL_SERIALIZACION bllSerializacion_626CV;
+        private BLL_PACK bllPack_626CV = new BLL_PACK();
 
         public frmSerializacion()
         {
@@ -49,7 +47,6 @@ namespace ingenieria_software_santander_vega
             return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         }
 
-        // ===================== SERIALIZAR =====================
         private void btnSerializar_626CV_Click(object sender, EventArgs e)
         {
             string nombre_626CV = (EsPacks_626CV() ? "Packs" : "Clientes") + "_" + DateTime.Now.ToString("yyyyMMdd_HHmm") + ".xml";
@@ -91,7 +88,6 @@ namespace ingenieria_software_santander_vega
             }
         }
 
-        // ===================== DESERIALIZAR =====================
         private void btnDeserializar_626CV_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog dialogo_626CV = new OpenFileDialog())
@@ -154,8 +150,8 @@ namespace ingenieria_software_santander_vega
                     pack_626CV.CantidadClases_626CV,
                     pack_626CV.PrecioLista_626CV.ToString("N2"),
                     pack_626CV.PorcentajeDescuento_626CV.ToString("N2"),
-                    pack_626CV.CalcularPrecioFinal_626CV().ToString("N2"),
-                    pack_626CV.ObtenerDescripcionEstado_626CV(),
+                    bllPack_626CV.CalcularPrecioFinal_626CV(pack_626CV).ToString("N2"),
+                    bllPack_626CV.ObtenerDescripcionEstado_626CV(pack_626CV),
                     integro_626CV ? "Íntegro" : "ALTERADO");
             }
 
@@ -198,7 +194,6 @@ namespace ingenieria_software_santander_vega
         {
             dgvDatos_626CV.DataSource = tabla_626CV;
 
-            // Pinta en rojo los registros alterados
             foreach (DataGridViewRow fila_626CV in dgvDatos_626CV.Rows)
             {
                 if (Convert.ToString(fila_626CV.Cells["Integridad"].Value) == "ALTERADO")

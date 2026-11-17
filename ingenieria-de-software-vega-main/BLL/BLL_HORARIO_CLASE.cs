@@ -21,5 +21,27 @@ namespace BLL
         {
             return mapperHorario_626CV.ConsultarCupoDisponible_626CV(idHorario_626CV, fecha_626CV, out cupoMaximo_626CV, out cupoOcupado_626CV);
         }
+
+        public string TraducirDia_626CV(DayOfWeek dia_626CV)
+        {
+            switch (dia_626CV)
+            {
+                case DayOfWeek.Monday: return "Lunes";
+                case DayOfWeek.Tuesday: return "Martes";
+                case DayOfWeek.Wednesday: return "Miércoles";
+                case DayOfWeek.Thursday: return "Jueves";
+                case DayOfWeek.Friday: return "Viernes";
+                case DayOfWeek.Saturday: return "Sábado";
+                case DayOfWeek.Sunday: return "Domingo";
+                default: return dia_626CV.ToString();
+            }
+        }
+
+
+        public string ObtenerDescripcion_626CV(HORARIO_CLASE horario_626CV)
+        {
+            if (horario_626CV == null) return string.Empty;
+            return $"{TraducirDia_626CV(horario_626CV.Dia_626CV)} {horario_626CV.Hora_626CV:hh\\:mm} (cupo {horario_626CV.CupoMaximo_626CV})";
+        }
     }
 }

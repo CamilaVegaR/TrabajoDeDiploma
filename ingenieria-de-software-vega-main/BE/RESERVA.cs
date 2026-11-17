@@ -5,7 +5,7 @@ using System.Text;
 
 namespace BE
 {
-    public class RESERVA :IIntegrable
+    public class RESERVA : IIntegrable
     {
         public RESERVA() { }
 
@@ -69,20 +69,5 @@ namespace BE
         }
 
         public string DVH { get; set; }
-        public string ObtenerDescripcionHorario_626CV()
-        {
-            if (Horario_626CV == null) return string.Empty;
-            return $"{HORARIO_CLASE.TraducirDia_626CV(Horario_626CV.Dia_626CV)} {Horario_626CV.Hora_626CV:hh\\:mm}";
-        }
-
-        public string ObtenerDescripcionFechaClase_626CV()
-        {
-            return FechaClase_626CV.ToString("dd/MM/yyyy");
-        }
-
-        public string ObtenerDescripcionEstado_626CV()
-        {
-            return Estado_626CV == ESTADO_RESERVA_ENUM.ACTIVA_626CV ? "Activa" : "Cancelada";
-        }
     }
 }

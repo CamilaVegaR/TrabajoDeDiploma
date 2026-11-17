@@ -7,63 +7,44 @@ namespace BE
 {
     public class HORARIO_CLASE : IIntegrable
     {
-            public HORARIO_CLASE() { }
+        public HORARIO_CLASE() { }
 
-            public HORARIO_CLASE(DayOfWeek pDia_626CV, TimeSpan pHora_626CV, int pCupoMaximo_626CV)
-            {
-                this.dia_626CV = pDia_626CV;
-                this.hora_626CV = pHora_626CV;
-                this.cupoMaximo_626CV = pCupoMaximo_626CV;
-            }
-
-            private int id_626CV;
-            public int Id_626CV
-            {
-                get { return id_626CV; }
-                set { id_626CV = value; }
-            }
-
-            private DayOfWeek dia_626CV;
-            public DayOfWeek Dia_626CV
-            {
-                get { return dia_626CV; }
-                set { dia_626CV = value; }
-            }
-
-            private TimeSpan hora_626CV;
-            public TimeSpan Hora_626CV
-            {
-                get { return hora_626CV; }
-                set { hora_626CV = value; }
-            }
-
-            private int cupoMaximo_626CV;
-            public int CupoMaximo_626CV
-            {
-                get { return cupoMaximo_626CV; }
-                set { cupoMaximo_626CV = value; }
-            }
-
-            public string DVH { get; set; }
-            public override string ToString()
-            {
-            return $"{TraducirDia_626CV(Dia_626CV)} {Hora_626CV:hh\\:mm} (cupo {CupoMaximo_626CV})";
-        }
-
-        public static string TraducirDia_626CV(DayOfWeek dia_626CV)
+        public HORARIO_CLASE(DayOfWeek pDia_626CV, TimeSpan pHora_626CV, int pCupoMaximo_626CV)
         {
-            switch (dia_626CV)
-            {
-                case DayOfWeek.Monday: return "Lunes";
-                case DayOfWeek.Tuesday: return "Martes";
-                case DayOfWeek.Wednesday: return "Miércoles";
-                case DayOfWeek.Thursday: return "Jueves";
-                case DayOfWeek.Friday: return "Viernes";
-                case DayOfWeek.Saturday: return "Sábado";
-                case DayOfWeek.Sunday: return "Domingo";
-                default: return dia_626CV.ToString();
-            }
+            this.dia_626CV = pDia_626CV;
+            this.hora_626CV = pHora_626CV;
+            this.cupoMaximo_626CV = pCupoMaximo_626CV;
         }
-      
+
+        private int id_626CV;
+        public int Id_626CV
+        {
+            get { return id_626CV; }
+            set { id_626CV = value; }
+        }
+
+        private DayOfWeek dia_626CV;
+        public DayOfWeek Dia_626CV
+        {
+            get { return dia_626CV; }
+            set { dia_626CV = value; }
+        }
+
+        private TimeSpan hora_626CV;
+        public TimeSpan Hora_626CV
+        {
+            get { return hora_626CV; }
+            set { hora_626CV = value; }
+        }
+
+        private int cupoMaximo_626CV;
+        public int CupoMaximo_626CV
+        {
+            get { return cupoMaximo_626CV; }
+            set { cupoMaximo_626CV = value; }
+        }
+
+        public string DVH { get; set; }
+
     }
 }

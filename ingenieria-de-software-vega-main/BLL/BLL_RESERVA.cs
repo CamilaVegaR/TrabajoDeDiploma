@@ -133,5 +133,21 @@ namespace BLL
             string dvv_626CV = Servicios.GESTOR_INTEGRIDAD.CalcularDVV(listaReservas_626CV.ConvertAll(r => (BE.IIntegrable)r));
             new BLL_DIGITO_VERIFICADOR().ActualizarDVV(new BE.DIGITO_VERIFICADOR { Tabla = "RESERVA", DVV = dvv_626CV });
         }
+
+        public string ObtenerDescripcionHorario_626CV(RESERVA reserva_626CV)
+        {
+            if (reserva_626CV.Horario_626CV == null) return string.Empty;
+            return $"{new BLL_HORARIO_CLASE().TraducirDia_626CV(reserva_626CV.Horario_626CV.Dia_626CV)} {reserva_626CV.Horario_626CV.Hora_626CV:hh\\:mm}";
+        }
+
+        public string ObtenerDescripcionFechaClase_626CV(RESERVA reserva_626CV)
+        {
+            return reserva_626CV.FechaClase_626CV.ToString("dd/MM/yyyy");
+        }
+
+        public string ObtenerDescripcionEstado_626CV(RESERVA reserva_626CV)
+        {
+            return reserva_626CV.Estado_626CV == ESTADO_RESERVA_ENUM.ACTIVA_626CV ? "Activa" : "Cancelada";
+        }
     }
 }

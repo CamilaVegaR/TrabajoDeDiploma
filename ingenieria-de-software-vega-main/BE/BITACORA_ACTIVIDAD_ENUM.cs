@@ -27,7 +27,9 @@ namespace BE
         // A03 - Serialización
         SERIALIZACION,
         DESERIALIZACION,
-        // Tercera entrega - Control de cambios de PACK
-        PACK_VERSION_ACTIVADA
+        // Control de cambios de PACK
+        PACK_VERSION_ACTIVADA,
+        // RF2 - Ajustar Saldo de Clases
+        SALDO_AJUSTADO
     }
 }

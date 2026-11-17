@@ -123,7 +123,7 @@ namespace BLL
             return mapperPack_626CV.ListarTodos_626CV().OrderBy(p => p.Id_626CV).ToList();
         }
 
-     
+
         public int ActualizarDVH_626CV(PACK pack_626CV)
         {
             return mapperPack_626CV.ActualizarDVH_626CV(pack_626CV);
@@ -166,12 +166,24 @@ namespace BLL
 
         private void RegistrarBitacora_626CV(BITACORA_ACTIVIDAD_ENUM actividad_626CV, string observacion_626CV)
         {
-  
+
             if (observacion_626CV != null && observacion_626CV.Length > 50)
                 observacion_626CV = observacion_626CV.Substring(0, 50);
 
             BITACORA bitacora_626CV = new BITACORA(SINGLETON_SESION.GetInstance().usuario, DateTime.Now, actividad_626CV, observacion_626CV);
             new BLL_BITACORA().Insertar(bitacora_626CV);
+        }
+
+
+        public decimal CalcularPrecioFinal_626CV(PACK pack_626CV)
+        {
+            decimal precioFinal_626CV = pack_626CV.PrecioLista_626CV * (1 - pack_626CV.PorcentajeDescuento_626CV / 100m);
+            return Math.Round(precioFinal_626CV, 2, MidpointRounding.AwayFromZero);
+        }
+
+        public string ObtenerDescripcionEstado_626CV(PACK pack_626CV)
+        {
+            return pack_626CV.Activo_626CV ? "Activo" : "Desactivado";
         }
     }
 

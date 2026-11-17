@@ -84,10 +84,5 @@ namespace BE
         }
 
         public string DVH { get; set; }
-
-        public string ObtenerDescripcionEstado_626CV()
-        {
-            return Activo_626CV ? "Activo" : "Desactivado";
-        }
     }
 }

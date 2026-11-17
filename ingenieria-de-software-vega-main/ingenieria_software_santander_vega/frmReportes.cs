@@ -13,8 +13,7 @@ using System.Windows.Forms;
 
 namespace ingenieria_software_santander_vega
 {
-    // Reportes: RF1 (reservas), RF2 (ventas de clases y packs) y global (resumen de gestión).
-    // Se elige el tipo y el período, se ve una vista previa por sección y se exporta a PDF.
+
     public partial class frmReportes : FORM_BASE
     {
         private BLL_REPORTE bllReporte_626CV;
@@ -35,8 +34,6 @@ namespace ingenieria_software_santander_vega
             cmbTipo_626CV.Items.Add("RF2 - Ventas de clases y packs");
             cmbTipo_626CV.Items.Add("Global - Resumen de gestión");
             cmbTipo_626CV.SelectedIndex = 0;
-
-            // Por defecto: desde el primer día del mes hasta hoy
             dtpHasta_626CV.Value = DateTime.Today;
             dtpDesde_626CV.Value = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
 
@@ -74,6 +71,7 @@ namespace ingenieria_software_santander_vega
 
             lblTituloReporte_626CV.Text = $"{reporteActual_626CV.Titulo_626CV} — {reporteActual_626CV.Subtitulo_626CV}";
 
+            cmbSeccion_626CV.DisplayMember = "Titulo_626CV";
             cmbSeccion_626CV.Items.Clear();
             foreach (REPORTE_SECCION seccion_626CV in reporteActual_626CV.Secciones_626CV)
                 cmbSeccion_626CV.Items.Add(seccion_626CV);
@@ -83,7 +81,7 @@ namespace ingenieria_software_santander_vega
             btnExportarPdf_626CV.Enabled = true;
         }
 
-        // Muestra en la grilla la sección elegida del reporte
+    
         private void cmbSeccion_626CV_SelectedIndexChanged(object sender, EventArgs e)
         {
             REPORTE_SECCION seccion_626CV = cmbSeccion_626CV.SelectedItem as REPORTE_SECCION;
@@ -107,7 +105,6 @@ namespace ingenieria_software_santander_vega
                 : string.Join(Environment.NewLine, seccion_626CV.Resumen_626CV);
         }
 
-        // Si cambia el tipo o el período, la vista previa deja de corresponder
         private void Filtro_626CV_Changed(object sender, EventArgs e)
         {
             LimpiarVistaPrevia_626CV();
@@ -124,7 +121,7 @@ namespace ingenieria_software_santander_vega
             using (SaveFileDialog dialogo_626CV = new SaveFileDialog())
             {
                 dialogo_626CV.Filter = "Archivo PDF (*.pdf)|*.pdf";
-                // Por defecto se guarda en Mis documentos, donde el usuario siempre puede escribir
+               
                 dialogo_626CV.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
                 dialogo_626CV.FileName = $"{NombreArchivo_626CV()}_{DateTime.Now:yyyyMMdd_HHmm}.pdf";
 

@@ -62,17 +62,6 @@ namespace BE
         }
 
         public string DVH { get; set; }
-
-        public decimal CalcularPrecioFinal_626CV()
-        {
-            decimal precioFinal_626CV = PrecioLista_626CV * (1 - PorcentajeDescuento_626CV / 100m);
-            return Math.Round(precioFinal_626CV, 2, MidpointRounding.AwayFromZero);
-        }
-
-        public string ObtenerDescripcionEstado_626CV()
-        {
-            return Activo_626CV ? "Activo" : "Desactivado";
-        }
     }
 
 }

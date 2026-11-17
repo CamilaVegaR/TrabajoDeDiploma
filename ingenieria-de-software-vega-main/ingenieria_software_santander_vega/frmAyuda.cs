@@ -210,6 +210,23 @@ Seleccione el pack y toque ""Desactivar"". El pack no se borra: deja de ofrecers
 • Un pack desactivado no se puede modificar.
 • Cada alta, modificación o desactivación queda registrada automáticamente en Maestros > Control de cambios de packs."),
 
+                new TEMA_AYUDA("frmAjusteSaldo", "Ajustar saldo de clases", @"
+# Ajustar el saldo de un cliente
+1. Escriba el DNI del cliente y toque ""Buscar"". Se muestra su nombre y su saldo actual.
+2. Elija ""Sumar clases"" o ""Restar clases"".
+3. Indique la cantidad de clases (de 1 a 100).
+4. Escriba el motivo del ajuste (hasta 30 caracteres).
+5. Toque ""Ajustar saldo"" y confirme con ""Sí"".
+
+# Para qué sirve
+• Dar una clase de cortesía o compensar una clase suspendida.
+• Corregir un saldo cargado por error.
+
+# Importante
+• El saldo no puede quedar en negativo: no se pueden restar más clases de las que el cliente tiene.
+• El motivo es obligatorio y queda registrado en la bitácora junto con el DNI y la cantidad.
+• Para vender clases use Compra de Clases > Registrar Compra. El ajuste no registra una compra ni un importe."),
+
                 new TEMA_AYUDA("frmControlCambiosPack", "Control de cambios de packs", @"
 Esta pantalla muestra todas las versiones que tuvo cada pack. Cada vez que un pack se crea, se modifica o se desactiva, el sistema guarda una fila nueva con la fecha y la hora.
 

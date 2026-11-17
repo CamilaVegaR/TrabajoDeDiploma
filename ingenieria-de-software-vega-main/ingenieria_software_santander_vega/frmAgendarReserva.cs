@@ -14,7 +14,7 @@ namespace ingenieria_software_santander_vega
 {
     public partial class frmAgendarReserva : FORM_BASE
     {
-       
+
         private CLIENTE clienteActual_626CV;
         private BLL_RESERVA bllReserva_626CV;
         private BLL_CLIENTE bllCliente_626CV;
@@ -60,7 +60,19 @@ namespace ingenieria_software_santander_vega
         }
         private void CargarHorarios_626CV()
         {
+            cmbHorario_626CV.Format -= cmbHorario_626CV_Format;
+            cmbHorario_626CV.Format += cmbHorario_626CV_Format;
             cmbHorario_626CV.DataSource = bllHorario_626CV.ListarHorarios_626CV();
+        }
+
+        // Texto que se ve en el combo de horarios: día, hora y cupo máximo
+        private void cmbHorario_626CV_Format(object sender, ListControlConvertEventArgs e)
+        {
+            HORARIO_CLASE horario_626CV = e.ListItem as HORARIO_CLASE;
+            if (horario_626CV != null)
+            {
+                e.Value = bllHorario_626CV.ObtenerDescripcion_626CV(horario_626CV);
+            }
         }
 
         private void LimpiarCliente_626CV()
@@ -81,23 +93,23 @@ namespace ingenieria_software_santander_vega
             HORARIO_CLASE horarioSeleccionado_626CV = (HORARIO_CLASE)cmbHorario_626CV.SelectedItem;
             DateTime fechaClase_626CV = dtpFechaClase_626CV.Value.Date;
 
-            if (!ValidarDiaCoincideConFecha_626CV(horarioSeleccionado_626CV, fechaClase_626CV))   
+            if (!ValidarDiaCoincideConFecha_626CV(horarioSeleccionado_626CV, fechaClase_626CV))
             {
                 MessageBox.Show(
-                    $"La fecha elegida ({fechaClase_626CV:dd/MM/yyyy}) no es un {HORARIO_CLASE.TraducirDia_626CV(horarioSeleccionado_626CV.Dia_626CV)}.\nElija una fecha que coincida con el día del horario.",
+                    $"La fecha elegida ({fechaClase_626CV:dd/MM/yyyy}) no es un {bllHorario_626CV.TraducirDia_626CV(horarioSeleccionado_626CV.Dia_626CV)}.\nElija una fecha que coincida con el día del horario.",
                     "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             string resultado_626CV = bllReserva_626CV.AgendarReserva_626CV(
             clienteActual_626CV, horarioSeleccionado_626CV, fechaClase_626CV, ObtenerCanalContactoSeleccionado_626CV());
-            
+
 
             if (resultado_626CV == null)
             {
                 clienteActual_626CV = bllCliente_626CV.ObtenerPorId_626CV(clienteActual_626CV.Id_626CV);
                 lblClienteEncontrado_626CV.Text = $"Cliente: {clienteActual_626CV.Nombre_626CV} {clienteActual_626CV.Apellido_626CV} — Saldo: {clienteActual_626CV.SaldoClases_626CV} clase(s)";
 
-                ActualizarCupoDisponible_626CV(); 
+                ActualizarCupoDisponible_626CV();
 
                 MessageBox.Show(
                     $"Reserva agendada correctamente.\nSaldo restante: {clienteActual_626CV.SaldoClases_626CV} clase(s).\n{lblCupo_626CV.Text}.",
@@ -180,7 +192,7 @@ namespace ingenieria_software_santander_vega
             ActualizarCupoDisponible_626CV();
             CargarReservasCliente_626CV();
         }
-     
+
         private void btnVolver_626CV_Click(object sender, EventArgs e)
         {
             Navegar(new frmMenu(), null, true);
@@ -234,9 +246,9 @@ namespace ingenieria_software_santander_vega
             {
                 dgvReservas_626CV.Rows.Add(
                     reserva_626CV.Id_626CV,
-                    reserva_626CV.ObtenerDescripcionHorario_626CV(),
-                    reserva_626CV.ObtenerDescripcionFechaClase_626CV(),
-                    reserva_626CV.ObtenerDescripcionEstado_626CV());
+                    bllReserva_626CV.ObtenerDescripcionHorario_626CV(reserva_626CV),
+                    bllReserva_626CV.ObtenerDescripcionFechaClase_626CV(reserva_626CV),
+                    bllReserva_626CV.ObtenerDescripcionEstado_626CV(reserva_626CV));
             }
         }
         private bool ValidarDiaCoincideConFecha_626CV(HORARIO_CLASE horario_626CV, DateTime fecha_626CV)
@@ -261,7 +273,7 @@ namespace ingenieria_software_santander_vega
             if (!ValidarDiaCoincideConFecha_626CV(horarioNuevo_626CV, fechaNueva_626CV))
             {
                 MessageBox.Show(
-                    $"La fecha elegida ({fechaNueva_626CV:dd/MM/yyyy}) no es un {HORARIO_CLASE.TraducirDia_626CV(horarioNuevo_626CV.Dia_626CV)}.\nElija una fecha que coincida con el día del horario.",
+                    $"La fecha elegida ({fechaNueva_626CV:dd/MM/yyyy}) no es un {bllHorario_626CV.TraducirDia_626CV(horarioNuevo_626CV.Dia_626CV)}.\nElija una fecha que coincida con el día del horario.",
                     "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }

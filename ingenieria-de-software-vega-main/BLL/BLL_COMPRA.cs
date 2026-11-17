@@ -15,7 +15,7 @@ namespace BLL
         private DAL_COMPRA mapperCompra_626CV = new DAL_COMPRA();
         private DAL_CLIENTE mapperCliente_626CV = new DAL_CLIENTE();
 
-        
+
         public string RegistrarCompra_626CV(CLIENTE cliente_626CV, PACK pack_626CV, CANAL_CONTACTO_ENUM canalContacto_626CV, out COMPRA compraRegistrada_626CV)
         {
             compraRegistrada_626CV = null;
@@ -27,6 +27,7 @@ namespace BLL
                 return "Debe seleccionar un pack.";
 
             COMPRA nueva_626CV = new COMPRA(cliente_626CV, pack_626CV, canalContacto_626CV);
+            nueva_626CV.Importe_626CV = new BLL_PACK().CalcularPrecioFinal_626CV(pack_626CV);
 
             int idCompra_626CV;
             int resultado_626CV = mapperCompra_626CV.InsertarCompra_626CV(nueva_626CV, out idCompra_626CV);
@@ -42,7 +43,7 @@ namespace BLL
                     }
                     ActualizarDVVCompra_626CV();
 
-                  
+
                     ActualizarDVHYDVVCliente_626CV(cliente_626CV.Id_626CV);
 
                     RegistrarBitacora_626CV("DNI " + cliente_626CV.Dni_626CV + " - " + pack_626CV.Nombre_626CV);
@@ -94,7 +95,7 @@ namespace BLL
 
         private void RegistrarBitacora_626CV(string observacion_626CV)
         {
-           
+
             if (observacion_626CV != null && observacion_626CV.Length > 50)
                 observacion_626CV = observacion_626CV.Substring(0, 50);
 

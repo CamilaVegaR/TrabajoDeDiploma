@@ -46,6 +46,7 @@
             this.compraDeClasesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.registrarCompraToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.configurarPacksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ajustarSaldoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reportesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.serializaciónToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.maestrosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -196,7 +197,8 @@
             // 
             this.compraDeClasesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.registrarCompraToolStripMenuItem,
-            this.configurarPacksToolStripMenuItem});
+            this.configurarPacksToolStripMenuItem,
+            this.ajustarSaldoToolStripMenuItem});
             this.compraDeClasesToolStripMenuItem.Name = "compraDeClasesToolStripMenuItem";
             this.compraDeClasesToolStripMenuItem.Size = new System.Drawing.Size(171, 29);
             this.compraDeClasesToolStripMenuItem.Text = "Compra de Clases";
@@ -214,6 +216,13 @@
             this.configurarPacksToolStripMenuItem.Size = new System.Drawing.Size(252, 34);
             this.configurarPacksToolStripMenuItem.Text = "Configurar Packs";
             this.configurarPacksToolStripMenuItem.Click += new System.EventHandler(this.packsToolStripMenuItem_Click);
+            //
+            // ajustarSaldoToolStripMenuItem
+            //
+            this.ajustarSaldoToolStripMenuItem.Name = "ajustarSaldoToolStripMenuItem";
+            this.ajustarSaldoToolStripMenuItem.Size = new System.Drawing.Size(252, 34);
+            this.ajustarSaldoToolStripMenuItem.Text = "Ajustar Saldo de Clases";
+            this.ajustarSaldoToolStripMenuItem.Click += new System.EventHandler(this.ajustarSaldoToolStripMenuItem_Click);
             // 
             // reportesToolStripMenuItem
             // 
@@ -294,6 +303,7 @@
         private System.Windows.Forms.ToolStripMenuItem compraDeClasesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem registrarCompraToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem configurarPacksToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ajustarSaldoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem reportesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem serializaciónToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem maestrosToolStripMenuItem;

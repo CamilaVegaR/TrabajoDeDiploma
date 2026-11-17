@@ -14,14 +14,12 @@ using System.Windows.Forms;
 
 namespace ingenieria_software_santander_vega
 {
-    // Maestros > Control de cambios de packs (auditoría de la tabla PACK_C).
-    // Muestra las versiones que registró el trigger de PACK, permite filtrarlas
-    // (código, nombre, fecha inicial y final) y activar una versión anterior.
+
     public partial class frmControlCambiosPack : FORM_BASE
     {
         private BLL_PACK_C bllPackC_626CV;
 
-        // Lo que se ve en la grilla (con los filtros aplicados)
+
         private List<PACK_C> cambios_626CV;
 
         public frmControlCambiosPack()
@@ -39,9 +37,6 @@ namespace ingenieria_software_santander_vega
             CargarGrilla_626CV(bllPackC_626CV.ListarTodos_626CV());
         }
 
-        // ----------------------------------------------------------------
-        // Botones
-        // ----------------------------------------------------------------
         private void btnAplicar_626CV_Click(object sender, EventArgs e)
         {
             AplicarFiltros_626CV();
@@ -75,7 +70,7 @@ namespace ingenieria_software_santander_vega
                 $"Clases: {cambio_626CV.CantidadClases_626CV}\n" +
                 $"Precio de lista: $ {cambio_626CV.PrecioLista_626CV:N2}\n" +
                 $"Descuento: {cambio_626CV.PorcentajeDescuento_626CV:0.##}%\n" +
-                $"Estado: {cambio_626CV.ObtenerDescripcionEstado_626CV()}";
+                $"Estado: {bllPackC_626CV.ObtenerDescripcionEstado_626CV(cambio_626CV)}";
 
             if (MessageBox.Show(mensaje_626CV, "Activar versión", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
                 return;
@@ -99,9 +94,7 @@ namespace ingenieria_software_santander_vega
             Navegar(new frmMenu(), null, true);
         }
 
-        // ----------------------------------------------------------------
-        // Métodos auxiliares
-        // ----------------------------------------------------------------
+
         private void AplicarFiltros_626CV()
         {
             int? idPack_626CV = null;
@@ -140,10 +133,10 @@ namespace ingenieria_software_santander_vega
                     cambio_626CV.CantidadClases_626CV,
                     $"$ {cambio_626CV.PrecioLista_626CV:N2}",
                     $"{cambio_626CV.PorcentajeDescuento_626CV:0.##}%",
-                    cambio_626CV.ObtenerDescripcionEstado_626CV(),
+                    bllPackC_626CV.ObtenerDescripcionEstado_626CV(cambio_626CV),
                     cambio_626CV.Act_626CV ? "1" : "0");
 
-                // La versión activa de cada pack se resalta
+              
                 if (cambio_626CV.Act_626CV)
                     dgvCambios_626CV.Rows[fila_626CV].DefaultCellStyle.Font = new Font(dgvCambios_626CV.Font, FontStyle.Bold);
             }
@@ -151,8 +144,7 @@ namespace ingenieria_software_santander_vega
             dgvCambios_626CV.ClearSelection();
         }
 
-        // Cod. Pack: "(Todos)" + cada pack con el nombre de su versión activa.
-        // Nombre: todos los nombres que tuvo algún pack (también se puede escribir).
+
         private void CargarCombos_626CV()
         {
             List<PACK_C> todos_626CV = bllPackC_626CV.ListarTodos_626CV();

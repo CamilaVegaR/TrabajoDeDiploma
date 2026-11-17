@@ -247,6 +247,7 @@ namespace ingenieria_software_santander_vega
                 bool puedeConfigurarPacks = usuario.ValidarPermiso("ADMIN_PACKS");
                 registrarCompraToolStripMenuItem.Visible = puedeRegistrarCompra;
                 configurarPacksToolStripMenuItem.Visible = puedeConfigurarPacks;
+                ajustarSaldoToolStripMenuItem.Visible = puedeConfigurarPacks;
                 // "Compra de Clases" solo se muestra si tiene al menos una de sus dos opciones
                 registrarCompraToolStripMenuItem.OwnerItem.Visible = puedeRegistrarCompra || puedeConfigurarPacks;
 
@@ -374,7 +375,11 @@ namespace ingenieria_software_santander_vega
             Navegar(new frmPacks(), "ADMIN_PACKS", true);
         }
 
-   
+        private void ajustarSaldoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Navegar(new frmAjusteSaldo(), "ADMIN_PACKS", true);
+        }
+
         private void claseSueltaToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Navegar(new frmCompras(), null, true);

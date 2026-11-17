@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace ingenieria_software_santander_vega
 {
- 
+
     public partial class frmCompras : FORM_BASE
     {
         private CLIENTE clienteActual_626CV;
@@ -37,9 +37,7 @@ namespace ingenieria_software_santander_vega
             LimpiarCliente_626CV();
         }
 
-        // ----------------------------------------------------------------
-        // Búsqueda y registro de cliente
-        // ----------------------------------------------------------------
+   
         private void btnBuscarCliente_626CV_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtDni_626CV.Text))
@@ -58,7 +56,7 @@ namespace ingenieria_software_santander_vega
             }
             else
             {
-                // CU05 flujo 2.1: se extiende el CU02 - Registrar Cliente
+                
                 lblClienteEncontrado_626CV.Text = "Cliente no encontrado. Complete los datos para registrarlo.";
                 pnlClienteNuevo_626CV.Visible = true;
                 dgvCompras_626CV.Rows.Clear();
@@ -90,9 +88,7 @@ namespace ingenieria_software_santander_vega
             CargarHistorial_626CV();
         }
 
-        // ----------------------------------------------------------------
-        // CU05 - Registrar compra
-        // ----------------------------------------------------------------
+
         private void cmbPack_626CV_SelectedIndexChanged(object sender, EventArgs e)
         {
             MostrarImporte_626CV();
@@ -119,13 +115,13 @@ namespace ingenieria_software_santander_vega
 
             if (resultado_626CV == null)
             {
-                // CU05 paso 10: se incluye el CU03 para mostrar el saldo actualizado
+                
                 clienteActual_626CV = bllCliente_626CV.ObtenerPorId_626CV(clienteActual_626CV.Id_626CV);
                 MostrarCliente_626CV();
 
                 decimal importe_626CV = compraRegistrada_626CV != null
                     ? compraRegistrada_626CV.Importe_626CV
-                    : packSeleccionado_626CV.CalcularPrecioFinal_626CV();
+                    : bllPack_626CV.CalcularPrecioFinal_626CV(packSeleccionado_626CV);
 
                 MessageBox.Show(
                     $"Compra registrada correctamente.\nImporte a cobrar: $ {importe_626CV:N2}\nSaldo actual: {clienteActual_626CV.SaldoClases_626CV} clase(s).",
@@ -136,7 +132,7 @@ namespace ingenieria_software_santander_vega
             else
             {
                 MessageBox.Show(resultado_626CV, "No se pudo registrar la compra", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                // CU05 flujo 7.2: si el pack fue desactivado, se actualiza la lista
+               
                 CargarPacks_626CV();
             }
         }
@@ -146,9 +142,7 @@ namespace ingenieria_software_santander_vega
             Navegar(new frmMenu(), null, true);
         }
 
-        // ----------------------------------------------------------------
-        // Métodos auxiliares
-        // ----------------------------------------------------------------
+  
         private void CargarPacks_626CV()
         {
             List<PACK> packs_626CV = bllPack_626CV.ListarActivos_626CV();
@@ -157,7 +151,7 @@ namespace ingenieria_software_santander_vega
 
             if (packs_626CV.Count == 0)
             {
-                // CU05 flujo 3.1
+                
                 lblImporte_626CV.Text = "No hay packs disponibles para la venta.";
                 lblImporte_626CV.ForeColor = Color.DarkRed;
                 btnRegistrarCompra_626CV.Enabled = false;
@@ -169,14 +163,13 @@ namespace ingenieria_software_santander_vega
             }
         }
 
-        // Texto que se ve en el combo de packs: nombre, clases, descuento y precio final
         private void cmbPack_626CV_Format(object sender, ListControlConvertEventArgs e)
         {
             PACK pack_626CV = e.ListItem as PACK;
             if (pack_626CV != null)
             {
                 e.Value = $"{pack_626CV.Nombre_626CV} - {pack_626CV.CantidadClases_626CV} clase(s) - " +
-                          $"{pack_626CV.PorcentajeDescuento_626CV:0.##}% desc. - $ {pack_626CV.CalcularPrecioFinal_626CV():N2}";
+                          $"{pack_626CV.PorcentajeDescuento_626CV:0.##}% desc. - $ {bllPack_626CV.CalcularPrecioFinal_626CV(pack_626CV):N2}";
             }
         }
 
@@ -189,7 +182,7 @@ namespace ingenieria_software_santander_vega
                 return;
             }
 
-            lblImporte_626CV.Text = $"Importe a cobrar: $ {pack_626CV.CalcularPrecioFinal_626CV():N2}";
+            lblImporte_626CV.Text = $"Importe a cobrar: $ {bllPack_626CV.CalcularPrecioFinal_626CV(pack_626CV):N2}";
             lblImporte_626CV.ForeColor = Color.DarkGreen;
         }
 
@@ -218,7 +211,7 @@ namespace ingenieria_software_santander_vega
 
             if (compras_626CV.Count == 0)
             {
-                // CU06 flujo 3.1
+                
                 lblHistorial_626CV.Text = "Historial de compras: el cliente no registra compras.";
                 return;
             }

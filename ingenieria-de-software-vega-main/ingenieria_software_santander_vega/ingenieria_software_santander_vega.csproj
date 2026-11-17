@@ -62,6 +62,12 @@
     <Compile Include="frmAgendarReserva.Designer.cs">
       <DependentUpon>frmAgendarReserva.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmAjusteSaldo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmAjusteSaldo.Designer.cs">
+      <DependentUpon>frmAjusteSaldo.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmAyuda.cs">
       <SubType>Form</SubType>
     </Compile>

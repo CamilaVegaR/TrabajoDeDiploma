@@ -18,7 +18,6 @@ namespace BE
             this.fechaCompra_626CV = DateTime.Now;
             this.cantidadClases_626CV = pPack_626CV.CantidadClases_626CV;
             this.porcentajeDescuento_626CV = pPack_626CV.PorcentajeDescuento_626CV;
-            this.importe_626CV = pPack_626CV.CalcularPrecioFinal_626CV();
         }
 
         private int id_626CV;

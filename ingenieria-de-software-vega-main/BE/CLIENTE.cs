@@ -68,11 +68,6 @@ namespace BE
             set { saldoClases_626CV = value; }
         }
 
-        public string ToString_626CV()
-        {
-            return Nombre_626CV + " " + Apellido_626CV;
-        }
-
         public string DVH { get; set; }
     }
 }

@@ -26,13 +26,13 @@ namespace BLL
             REPORTE_SECCION detalle_626CV = new REPORTE_SECCION("Detalle de reservas", "Fecha", "Horario", "Cliente", "DNI", "Canal", "Estado");
             foreach (RESERVA reserva_626CV in reservas_626CV)
             {
-                detalle_626CV.AgregarFila_626CV(
+                AgregarFila_626CV(detalle_626CV,
                     reserva_626CV.FechaClase_626CV.ToString("dd/MM/yyyy"),
                     DescribirHorario_626CV(reserva_626CV.Horario_626CV),
                     $"{reserva_626CV.Cliente_626CV.Apellido_626CV}, {reserva_626CV.Cliente_626CV.Nombre_626CV}",
                     reserva_626CV.Cliente_626CV.Dni_626CV,
                     DescribirCanal_626CV(reserva_626CV.CanalContacto_626CV),
-                    reserva_626CV.ObtenerDescripcionEstado_626CV());
+                    new BLL_RESERVA().ObtenerDescripcionEstado_626CV(reserva_626CV));
             }
 
             int activas_626CV = reservas_626CV.Count(r => r.Estado_626CV == ESTADO_RESERVA_ENUM.ACTIVA_626CV);
@@ -59,7 +59,7 @@ namespace BLL
             REPORTE_SECCION detalle_626CV = new REPORTE_SECCION("Detalle de compras", "Fecha", "Cliente", "DNI", "Pack", "Clases", "Descuento", "Importe", "Canal");
             foreach (COMPRA compra_626CV in compras_626CV)
             {
-                detalle_626CV.AgregarFila_626CV(
+                AgregarFila_626CV(detalle_626CV,
                     compra_626CV.FechaCompra_626CV.ToString("dd/MM/yyyy HH:mm"),
                     $"{compra_626CV.Cliente_626CV.Apellido_626CV}, {compra_626CV.Cliente_626CV.Nombre_626CV}",
                     compra_626CV.Cliente_626CV.Dni_626CV,
@@ -94,14 +94,14 @@ namespace BLL
             int clasesVendidas_626CV = compras_626CV.Sum(c => c.CantidadClases_626CV);
 
             REPORTE_SECCION indicadores_626CV = new REPORTE_SECCION("Indicadores del período", "Indicador", "Valor");
-            indicadores_626CV.AgregarFila_626CV("Ingresos por ventas", FormatearImporte_626CV(compras_626CV.Sum(c => c.Importe_626CV)));
-            indicadores_626CV.AgregarFila_626CV("Compras registradas", compras_626CV.Count.ToString());
-            indicadores_626CV.AgregarFila_626CV("Clases vendidas", clasesVendidas_626CV.ToString());
-            indicadores_626CV.AgregarFila_626CV("Clases reservadas (activas)", activas_626CV.Count.ToString());
-            indicadores_626CV.AgregarFila_626CV("Reservas canceladas", canceladas_626CV.ToString());
-            indicadores_626CV.AgregarFila_626CV("Ocupación promedio de las clases", FormatearPorcentaje_626CV(CalcularOcupacionPromedio_626CV(activas_626CV)));
-            indicadores_626CV.AgregarFila_626CV("Clientes con saldo disponible", clientesConSaldo_626CV.Count.ToString());
-            indicadores_626CV.AgregarFila_626CV("Clases pendientes de uso (saldo total)", clientesConSaldo_626CV.Sum(c => c.SaldoClases_626CV).ToString());
+            AgregarFila_626CV(indicadores_626CV, "Ingresos por ventas", FormatearImporte_626CV(compras_626CV.Sum(c => c.Importe_626CV)));
+            AgregarFila_626CV(indicadores_626CV, "Compras registradas", compras_626CV.Count.ToString());
+            AgregarFila_626CV(indicadores_626CV, "Clases vendidas", clasesVendidas_626CV.ToString());
+            AgregarFila_626CV(indicadores_626CV, "Clases reservadas (activas)", activas_626CV.Count.ToString());
+            AgregarFila_626CV(indicadores_626CV, "Reservas canceladas", canceladas_626CV.ToString());
+            AgregarFila_626CV(indicadores_626CV, "Ocupación promedio de las clases", FormatearPorcentaje_626CV(CalcularOcupacionPromedio_626CV(activas_626CV)));
+            AgregarFila_626CV(indicadores_626CV, "Clientes con saldo disponible", clientesConSaldo_626CV.Count.ToString());
+            AgregarFila_626CV(indicadores_626CV, "Clases pendientes de uso (saldo total)", clientesConSaldo_626CV.Sum(c => c.SaldoClases_626CV).ToString());
 
             REPORTE_SECCION ocupacionHorario_626CV = new REPORTE_SECCION("Ocupación por horario", "Horario", "Clases con reservas", "Reservas activas", "Ocupación promedio");
             var gruposHorario_626CV = activas_626CV
@@ -121,7 +121,7 @@ namespace BLL
                     ? 0
                     : (decimal)grupo_626CV.Reservas * 100m / (grupo_626CV.Clases * grupo_626CV.Horario.CupoMaximo_626CV);
 
-                ocupacionHorario_626CV.AgregarFila_626CV(
+                AgregarFila_626CV(ocupacionHorario_626CV,
                     DescribirHorario_626CV(grupo_626CV.Horario),
                     grupo_626CV.Clases.ToString(),
                     grupo_626CV.Reservas.ToString(),
@@ -131,7 +131,7 @@ namespace BLL
             REPORTE_SECCION saldos_626CV = new REPORTE_SECCION("Clientes con saldo disponible (al día de hoy)", "Cliente", "DNI", "Teléfono", "Clases disponibles");
             foreach (CLIENTE cliente_626CV in clientesConSaldo_626CV)
             {
-                saldos_626CV.AgregarFila_626CV(
+                AgregarFila_626CV(saldos_626CV,
                     $"{cliente_626CV.Apellido_626CV}, {cliente_626CV.Nombre_626CV}",
                     cliente_626CV.Dni_626CV,
                     cliente_626CV.Telefono_626CV,
@@ -185,7 +185,7 @@ namespace BLL
             {
                 int cupo_626CV = clase_626CV.Horario.CupoMaximo_626CV;
                 decimal ocupacion_626CV = cupo_626CV == 0 ? 0 : (decimal)clase_626CV.Reservas * 100m / cupo_626CV;
-                seccion_626CV.AgregarFila_626CV(
+                AgregarFila_626CV(seccion_626CV,
                     clase_626CV.Fecha.ToString("dd/MM/yyyy"),
                     DescribirHorario_626CV(clase_626CV.Horario),
                     clase_626CV.Reservas.ToString(),
@@ -215,7 +215,7 @@ namespace BLL
 
             foreach (var pack_626CV in packs_626CV)
             {
-                seccion_626CV.AgregarFila_626CV(
+                AgregarFila_626CV(seccion_626CV,
                     pack_626CV.Pack,
                     pack_626CV.Compras.ToString(),
                     pack_626CV.Clases.ToString(),
@@ -238,7 +238,7 @@ namespace BLL
 
         private string DescribirHorario_626CV(HORARIO_CLASE horario_626CV)
         {
-            return $"{HORARIO_CLASE.TraducirDia_626CV(horario_626CV.Dia_626CV)} {horario_626CV.Hora_626CV:hh\\:mm}";
+            return $"{new BLL_HORARIO_CLASE().TraducirDia_626CV(horario_626CV.Dia_626CV)} {horario_626CV.Hora_626CV:hh\\:mm}";
         }
 
         private string DescribirCanal_626CV(CANAL_CONTACTO_ENUM canal_626CV)
@@ -259,6 +259,11 @@ namespace BLL
         private string FormatearPorcentaje_626CV(decimal porcentaje_626CV)
         {
             return porcentaje_626CV.ToString("0.#", cultura_626CV) + "%";
+        }
+
+        private void AgregarFila_626CV(REPORTE_SECCION seccion_626CV, params string[] valores_626CV)
+        {
+            seccion_626CV.Filas_626CV.Add(valores_626CV);
         }
     }
 }

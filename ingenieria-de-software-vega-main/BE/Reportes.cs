@@ -35,15 +35,5 @@ namespace BE
         public string[] Columnas_626CV { get; set; }
         public List<string[]> Filas_626CV { get; set; }
         public List<string> Resumen_626CV { get; set; }
-
-        public void AgregarFila_626CV(params string[] valores_626CV)
-        {
-            Filas_626CV.Add(valores_626CV);
-        }
-
-        public override string ToString()
-        {
-            return Titulo_626CV;
-        }
     }
 }

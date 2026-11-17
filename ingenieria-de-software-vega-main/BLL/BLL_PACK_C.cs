@@ -102,5 +102,10 @@ namespace BLL
                 BITACORA_ACTIVIDAD_ENUM.PACK_VERSION_ACTIVADA, observacion_626CV);
             new BLL_BITACORA().Insertar(bitacora_626CV);
         }
+
+        public string ObtenerDescripcionEstado_626CV(PACK_C cambio_626CV)
+        {
+            return cambio_626CV.Activo_626CV ? "Activo" : "Desactivado";
+        }
     }
 }

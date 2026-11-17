@@ -13,13 +13,13 @@ using System.Windows.Forms;
 
 namespace ingenieria_software_santander_vega
 {
-    // CU07 - Crear Pack_626CV / CU08 - Modificar Pack_626CV / CU09 - Desactivar Pack_626CV
+
     public partial class frmPacks : FORM_BASE
     {
         private BLL_PACK bllPack_626CV;
         private List<PACK> packs_626CV;
 
-        // null = se está creando un pack nuevo (CU07); distinto de null = se modifica ese pack (CU08)
+
         private PACK packSeleccionado_626CV;
 
         public frmPacks()
@@ -36,18 +36,12 @@ namespace ingenieria_software_santander_vega
             PrepararNuevoPack_626CV();
         }
 
-        // ----------------------------------------------------------------
-        // CU07 - Crear Pack (botón "Nuevo" deja los campos vacíos)
-        // ----------------------------------------------------------------
         private void btnNuevo_626CV_Click(object sender, EventArgs e)
         {
             PrepararNuevoPack_626CV();
             txtNombre_626CV.Focus();
         }
 
-        // ----------------------------------------------------------------
-        // CU08 - Modificar Pack (al hacer clic en una fila se cargan sus valores)
-        // ----------------------------------------------------------------
         private void dgvPacks_626CV_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0) return;
@@ -67,7 +61,7 @@ namespace ingenieria_software_santander_vega
             lblModo_626CV.ForeColor = packSeleccionado_626CV.Activo_626CV ? Color.DarkBlue : Color.DarkRed;
         }
 
-        // Guarda un pack nuevo (CU07) o los cambios del pack seleccionado (CU08)
+
         private void btnGuardar_626CV_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtNombre_626CV.Text)
@@ -117,9 +111,7 @@ namespace ingenieria_software_santander_vega
             }
         }
 
-        // ----------------------------------------------------------------
-        // CU09 - Desactivar Pack
-        // ----------------------------------------------------------------
+
         private void btnDesactivar_626CV_Click(object sender, EventArgs e)
         {
             if (packSeleccionado_626CV == null)
@@ -159,7 +151,7 @@ namespace ingenieria_software_santander_vega
             Navegar(new frmMenu(), null, true);
         }
 
-        // Recalcula el precio final mientras se escribe el precio o el descuento
+
         private void txtPrecioODescuento_626CV_TextChanged(object sender, EventArgs e)
         {
             decimal precioLista_626CV, descuento_626CV;
@@ -168,7 +160,7 @@ namespace ingenieria_software_santander_vega
                 && precioLista_626CV > 0 && descuento_626CV >= 0 && descuento_626CV <= 100)
             {
                 PACK packTemporal_626CV = new PACK { PrecioLista_626CV = precioLista_626CV, PorcentajeDescuento_626CV = descuento_626CV };
-                lblPrecioFinal_626CV.Text = $"Precio final: $ {packTemporal_626CV.CalcularPrecioFinal_626CV():N2}";
+                lblPrecioFinal_626CV.Text = $"Precio final: $ {bllPack_626CV.CalcularPrecioFinal_626CV(packTemporal_626CV):N2}";
             }
             else
             {
@@ -176,9 +168,7 @@ namespace ingenieria_software_santander_vega
             }
         }
 
-        // ----------------------------------------------------------------
-        // Métodos auxiliares
-        // ----------------------------------------------------------------
+      
         private void CargarPacks_626CV()
         {
             packs_626CV = bllPack_626CV.ListarTodos_626CV();
@@ -192,8 +182,8 @@ namespace ingenieria_software_santander_vega
                     pack_626CV.CantidadClases_626CV,
                     $"$ {pack_626CV.PrecioLista_626CV:N2}",
                     $"{pack_626CV.PorcentajeDescuento_626CV:0.##}%",
-                    $"$ {pack_626CV.CalcularPrecioFinal_626CV():N2}",
-                    pack_626CV.ObtenerDescripcionEstado_626CV());
+                    $"$ {bllPack_626CV.CalcularPrecioFinal_626CV(pack_626CV):N2}",
+                    bllPack_626CV.ObtenerDescripcionEstado_626CV(pack_626CV));
 
                 if (!pack_626CV.Activo_626CV)
                     dgvPacks_626CV.Rows[fila_626CV].DefaultCellStyle.ForeColor = Color.Gray;
@@ -229,7 +219,7 @@ namespace ingenieria_software_santander_vega
             dgvPacks_626CV.Columns.Add(new DataGridViewTextBoxColumn { Name = "colEstado", HeaderText = "Estado", Width = 100 });
         }
 
-        // Acepta coma o punto como separador decimal
+       
         private bool TryParseDecimal_626CV(string texto_626CV, out decimal valor_626CV)
         {
             texto_626CV = (texto_626CV ?? "").Trim().Replace("$", "").Trim();
