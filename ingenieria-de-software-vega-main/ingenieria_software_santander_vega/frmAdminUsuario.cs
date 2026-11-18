@@ -26,6 +26,14 @@ namespace ingenieria_software_santander_vega
 
             if (this.DesignMode) return;
 
+            lblHistorial.Visible = false;
+            dgvHistorialUsuario.Visible = false;
+            lblAtributos.Visible = false;
+            lstAtributos.Visible = false;
+            btnRestaurar.Visible = false;
+            this.ClientSize = new System.Drawing.Size(470, this.ClientSize.Height);
+            this.CenterToScreen();
+
             cbSexo.DataSource = Enum.GetValues(typeof(SEXO_ENUM));
 
             CargarComboUsuarios();
@@ -127,7 +135,8 @@ namespace ingenieria_software_santander_vega
 
                 bllUsuario.ModificarUsuario(usuarioActual, adminResponsable);
 
-                MessageBox.Show("Usuario editado con éxito. El cambio fue registrado en la auditoría.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Usuario editado con éxito.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                
                 CargarComboUsuarios();
             }
             catch (Exception ex)

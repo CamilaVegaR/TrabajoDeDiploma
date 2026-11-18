@@ -37,19 +37,26 @@ namespace ingenieria_software_santander_vega
         {
             if (!string.IsNullOrWhiteSpace(txtFormulario.Text) && !string.IsNullOrWhiteSpace(txtClave.Text))
             {
-                ETIQUETA nuevaEtiqueta = new ETIQUETA
+                try
                 {
-                    Formulario = txtFormulario.Text.Trim(),
-                    Clave = txtClave.Text.Trim()
-                };
+                    ETIQUETA nuevaEtiqueta = new ETIQUETA
+                    {
+                        Formulario = txtFormulario.Text.Trim(),
+                        Clave = txtClave.Text.Trim()
+                    };
 
-                bllEtiquetas.InsertarEtiqueta(nuevaEtiqueta);
+                    bllEtiquetas.InsertarEtiqueta(nuevaEtiqueta);
 
-                txtFormulario.Clear();
-                txtClave.Clear();
+                    txtFormulario.Clear();
+                    txtClave.Clear();
 
-                MessageBox.Show("Etiqueta guardada correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                CargarEtiquetas();
+                    MessageBox.Show("Etiqueta guardada correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    CargarEtiquetas();
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("Error al guardar.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
             else
             {

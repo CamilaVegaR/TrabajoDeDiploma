@@ -90,7 +90,8 @@ namespace ingenieria_software_santander_vega
 
                     bllUsuario.ModificarUsuario(usuarioActual, usuarioActual);
 
-                    MessageBox.Show("Tus datos han sido actualizados correctamente. Han quedado registrados en el historial de auditoría.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Tus datos han sido actualizados correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    
                 }
             }
             catch (Exception ex)

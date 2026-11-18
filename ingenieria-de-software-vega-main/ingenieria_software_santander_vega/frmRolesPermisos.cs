@@ -322,16 +322,24 @@ namespace ingenieria_software_santander_vega
 
             if (!usrSel.Permisos.Any(p => p.Id == rolAAgregar.Id))
             {
-                usrSel.Permisos.Add(rolAAgregar);
+                try
+                {
+                    usrSel.Permisos.Add(rolAAgregar);
 
-                bllRolesPermisos.GuardarPermisosUsuario(usrSel);
-                RegistrarBitacora(BE.BITACORA_ACTIVIDAD_ENUM.ASIGNACION_ROLES,
-    "Usuario " + usrSel.NombreUsuario + ": se asignó " + rolAAgregar.Nombre);
+                    bllRolesPermisos.GuardarPermisosUsuario(usrSel);
+                    RegistrarBitacora(BE.BITACORA_ACTIVIDAD_ENUM.ASIGNACION_ROLES,
+                        "Usuario " + usrSel.NombreUsuario + ": se asignó " + rolAAgregar.Nombre);
 
-                bllRolesPermisos.CargarPermisosUsuario(usrSel);
+                    bllRolesPermisos.CargarPermisosUsuario(usrSel);
 
-                ArmarTreeUsuario(usrSel);
-                ActualizarListaRolesDisponiblesUsuario(usrSel);
+                    ArmarTreeUsuario(usrSel);
+                    ActualizarListaRolesDisponiblesUsuario(usrSel);
+                }
+                catch (Exception ex)
+                {
+                    usrSel.Permisos.Remove(rolAAgregar);
+                    MessageBox.Show(ex.Message, "Error al asignar", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
             }
             else
             {
@@ -351,16 +359,24 @@ namespace ingenieria_software_santander_vega
 
                 if (itemToRemove != null)
                 {
-                    usrSel.Permisos.Remove(itemToRemove);
+                    try
+                    {
+                        usrSel.Permisos.Remove(itemToRemove);
 
-                    bllRolesPermisos.GuardarPermisosUsuario(usrSel);
-                    RegistrarBitacora(BE.BITACORA_ACTIVIDAD_ENUM.ASIGNACION_ROLES,
-    "Usuario " + usrSel.NombreUsuario + ": se desasignó " + itemToRemove.Nombre);
+                        bllRolesPermisos.GuardarPermisosUsuario(usrSel);
+                        RegistrarBitacora(BE.BITACORA_ACTIVIDAD_ENUM.ASIGNACION_ROLES,
+                            "Usuario " + usrSel.NombreUsuario + ": se desasignó " + itemToRemove.Nombre);
 
-                    bllRolesPermisos.CargarPermisosUsuario(usrSel);
+                        bllRolesPermisos.CargarPermisosUsuario(usrSel);
 
-                    ArmarTreeUsuario(usrSel);
-                    ActualizarListaRolesDisponiblesUsuario(usrSel);
+                        ArmarTreeUsuario(usrSel);
+                        ActualizarListaRolesDisponiblesUsuario(usrSel);
+                    }
+                    catch (Exception ex)
+                    {
+                        usrSel.Permisos.Add(itemToRemove);
+                        MessageBox.Show(ex.Message, "Error al desasignar", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
                 }
             }
             else

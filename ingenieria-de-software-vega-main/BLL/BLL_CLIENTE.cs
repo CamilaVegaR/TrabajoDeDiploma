@@ -24,6 +24,10 @@ namespace BLL
 
         public CLIENTE RegistrarCliente_626CV(CLIENTE nuevo_626CV)
         {
+            CLIENTE existente_626CV = mapperCliente_626CV.ObtenerPorDni_626CV(nuevo_626CV.Dni_626CV);
+            if (existente_626CV != null)
+                return existente_626CV;
+
             int id_626CV = mapperCliente_626CV.InsertarCliente_626CV(nuevo_626CV);
             nuevo_626CV.Id_626CV = id_626CV;
 
@@ -34,6 +38,9 @@ namespace BLL
             List<CLIENTE> clientes_626CV = mapperCliente_626CV.ListarClientes_626CV();
             string dvv_626CV = Servicios.GESTOR_INTEGRIDAD.CalcularDVV(clientes_626CV.ConvertAll(cl => (IIntegrable)cl));
             new BLL_DIGITO_VERIFICADOR().ActualizarDVV(new DIGITO_VERIFICADOR { Tabla = "CLIENTE", DVV = dvv_626CV });
+
+            RegistrarBitacora_626CV(BITACORA_ACTIVIDAD_ENUM.CLIENTE_REGISTRADO,
+                "DNI " + guardado_626CV.Dni_626CV + " " + guardado_626CV.Apellido_626CV);
 
             return guardado_626CV;
         }
@@ -67,7 +74,7 @@ namespace BLL
             ActualizarDVHYDVVCliente_626CV(actual_626CV.Id_626CV);
 
             string signo_626CV = cantidad_626CV > 0 ? "+" : "";
-            RegistrarBitacora_626CV("DNI " + actual_626CV.Dni_626CV + " " + signo_626CV + cantidad_626CV + ": " + motivo_626CV);
+            RegistrarBitacora_626CV(BITACORA_ACTIVIDAD_ENUM.SALDO_AJUSTADO, "DNI " + actual_626CV.Dni_626CV + " " + signo_626CV + cantidad_626CV + ": " + motivo_626CV);
 
             return null;
         }
@@ -83,12 +90,12 @@ namespace BLL
             new BLL_DIGITO_VERIFICADOR().ActualizarDVV(new DIGITO_VERIFICADOR { Tabla = "CLIENTE", DVV = dvv_626CV });
         }
 
-        private void RegistrarBitacora_626CV(string observacion_626CV)
+        private void RegistrarBitacora_626CV(BITACORA_ACTIVIDAD_ENUM actividad_626CV, string observacion_626CV)
         {
             if (observacion_626CV != null && observacion_626CV.Length > 50)
                 observacion_626CV = observacion_626CV.Substring(0, 50);
 
-            BITACORA bitacora_626CV = new BITACORA(Servicios.SINGLETON_SESION.GetInstance().usuario, DateTime.Now, BITACORA_ACTIVIDAD_ENUM.SALDO_AJUSTADO, observacion_626CV);
+            BITACORA bitacora_626CV = new BITACORA(Servicios.SINGLETON_SESION.GetInstance().usuario, DateTime.Now, actividad_626CV, observacion_626CV);
             new BLL_BITACORA().Insertar(bitacora_626CV);
         }
     }

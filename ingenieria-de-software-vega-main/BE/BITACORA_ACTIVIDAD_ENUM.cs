@@ -30,6 +30,11 @@ namespace BE
         // Control de cambios de PACK
         PACK_VERSION_ACTIVADA,
         // RF2 - Ajustar Saldo de Clases
-        SALDO_AJUSTADO
+        SALDO_AJUSTADO,
+        // RF1 - Gestión de reservas
+        RESERVA_AGENDADA,
+        RESERVA_MODIFICADA,
+        RESERVA_CANCELADA,
+        CLIENTE_REGISTRADO
     }
 }

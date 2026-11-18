@@ -34,6 +34,9 @@ namespace BLL
 
                     ActualizarDVHYDVVCliente_626CV(cliente_626CV.Id_626CV);
 
+                    RegistrarBitacora_626CV(BITACORA_ACTIVIDAD_ENUM.RESERVA_AGENDADA,
+                        "Reserva " + idReserva_626CV + " DNI " + cliente_626CV.Dni_626CV + " " + fechaClase_626CV.ToString("dd/MM/yyyy"));
+
                     return null;
 
                 case -1:
@@ -61,6 +64,10 @@ namespace BLL
                     reservaModificada_626CV.DVH = Servicios.GESTOR_INTEGRIDAD.CalcularDVH(reservaModificada_626CV);
                     mapperReserva_626CV.ActualizarDVH_626CV(reservaModificada_626CV);
                     ActualizarDVVReserva_626CV();
+
+                    RegistrarBitacora_626CV(BITACORA_ACTIVIDAD_ENUM.RESERVA_MODIFICADA,
+                        "Reserva " + idReserva_626CV + " nueva fecha " + fechaClaseNueva_626CV.ToString("dd/MM/yyyy"));
+
                     return null;
 
                 case -1:
@@ -102,10 +109,14 @@ namespace BLL
             {
                 mapperCliente_626CV.ActualizarSaldo_626CV(reserva_626CV.Cliente_626CV.Id_626CV, 1);
                 ActualizarDVHYDVVCliente_626CV(reserva_626CV.Cliente_626CV.Id_626CV);
+                RegistrarBitacora_626CV(BITACORA_ACTIVIDAD_ENUM.RESERVA_CANCELADA,
+                    "Reserva " + idReserva_626CV + " con devolucion de clase");
                 return "Reserva cancelada. La clase fue devuelta al saldo del cliente.";
             }
             else
             {
+                RegistrarBitacora_626CV(BITACORA_ACTIVIDAD_ENUM.RESERVA_CANCELADA,
+                    "Reserva " + idReserva_626CV + " sin devolucion de clase");
                 return "Reserva cancelada. Al ser con menos de 24hs de anticipación, la clase no fue devuelta al saldo.";
             }
 
@@ -132,6 +143,15 @@ namespace BLL
             List<RESERVA> listaReservas_626CV = mapperReserva_626CV.ListarTodas_626CV();
             string dvv_626CV = Servicios.GESTOR_INTEGRIDAD.CalcularDVV(listaReservas_626CV.ConvertAll(r => (BE.IIntegrable)r));
             new BLL_DIGITO_VERIFICADOR().ActualizarDVV(new BE.DIGITO_VERIFICADOR { Tabla = "RESERVA", DVV = dvv_626CV });
+        }
+
+        private void RegistrarBitacora_626CV(BITACORA_ACTIVIDAD_ENUM actividad_626CV, string observacion_626CV)
+        {
+            if (observacion_626CV != null && observacion_626CV.Length > 50)
+                observacion_626CV = observacion_626CV.Substring(0, 50);
+
+            BITACORA bitacora_626CV = new BITACORA(Servicios.SINGLETON_SESION.GetInstance().usuario, DateTime.Now, actividad_626CV, observacion_626CV);
+            new BLL_BITACORA().Insertar(bitacora_626CV);
         }
 
         public string ObtenerDescripcionHorario_626CV(RESERVA reserva_626CV)

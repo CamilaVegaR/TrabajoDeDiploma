@@ -275,16 +275,13 @@ Muestra las actividades registradas en el sistema: ingresos y salidas, altas y c
 
 # Filtrar por usuario
 Elija un usuario y toque ""Filtrar"". ""Limpiar Filtros"" vuelve a mostrar todo."),
-
-                new TEMA_AYUDA("frmAdminUsuario", "Usuarios e historial", @"
+                new TEMA_AYUDA("frmAdminUsuario", "Administrar usuarios", @"
 # Modificar un usuario
 Seleccione el usuario, cambie sus datos y toque ""Editar"".
 
 # Eliminar y reactivar
-""Eliminar"" da de baja al usuario sin borrarlo. ""Reactivar"" lo vuelve a habilitar.
+""Eliminar"" da de baja al usuario sin borrarlo. ""Reactivar"" lo vuelve a habilitar."),
 
-# Historial
-Cada cambio de un usuario queda guardado. Seleccione una versión anterior en el historial y toque ""Restaurar"" para volver a ese estado."),
 
                 new TEMA_AYUDA("frmRolesPermisos", "Roles y permisos", @"
 Un permiso (patente) habilita una opción del sistema. Un rol (familia) agrupa permisos y otros roles.
