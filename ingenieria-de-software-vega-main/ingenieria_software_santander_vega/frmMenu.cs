@@ -346,7 +346,7 @@ namespace ingenieria_software_santander_vega
                     bllDV.RecalcularTablas();
 
                     bitacoraBLL = new BLL_BITACORA();
-                    BITACORA log = new BITACORA(SINGLETON_SESION.GetInstance().usuario, DateTime.Now, BE.BITACORA_ACTIVIDAD_ENUM.MODIFICACION);
+                    BITACORA log = new BITACORA(SINGLETON_SESION.GetInstance().usuario, DateTime.Now, BE.BITACORA_ACTIVIDAD_ENUM.RECALCULO_DV);
                     bitacoraBLL.Insertar(log);
 
                     this.Cursor = Cursors.Default;
@@ -369,7 +369,7 @@ namespace ingenieria_software_santander_vega
             Navegar(new frmAgendarReserva(), null, true);
         }
 
-     
+
         private void packsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Navegar(new frmPacks(), "ADMIN_PACKS", true);
@@ -390,7 +390,7 @@ namespace ingenieria_software_santander_vega
             Navegar(new frmReportes(), "REPORTES_626CV", true);
         }
 
-       
+
         private void serializaciónToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Navegar(new frmSerializacion(), "SERIALIZACION_626CV", true);

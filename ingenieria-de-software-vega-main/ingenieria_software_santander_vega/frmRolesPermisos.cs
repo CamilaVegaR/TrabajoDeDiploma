@@ -384,7 +384,7 @@ namespace ingenieria_software_santander_vega
                 MessageBox.Show("Seleccione un Rol o Permiso principal del árbol del usuario para desasignarlo.");
             }
         }
-        
+
         private void RegistrarBitacora(BE.BITACORA_ACTIVIDAD_ENUM actividad, string observacion)
         {
             try
@@ -431,6 +431,7 @@ namespace ingenieria_software_santander_vega
                 {
                     Componente nuevoRol = new Familia() { Nombre = nombreRol };
                     bllRolesPermisos.GuardarComponenteBase(nuevoRol, esFamilia: true);
+                    RegistrarBitacora(BE.BITACORA_ACTIVIDAD_ENUM.CREACION_FAMILIA, "Rol: " + nombreRol);
 
                     CargarDatosIniciales();
                     MessageBox.Show("Rol creado exitosamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -452,6 +453,7 @@ namespace ingenieria_software_santander_vega
                 {
                     Componente nuevaPatente = new Patente() { Nombre = nombrePatente };
                     bllRolesPermisos.GuardarComponenteBase(nuevaPatente, esFamilia: false);
+                    RegistrarBitacora(BE.BITACORA_ACTIVIDAD_ENUM.CREACION_PERMISO, "Permiso: " + nombrePatente);
 
                     CargarDatosIniciales();
                     MessageBox.Show("Permiso creado exitosamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -480,6 +482,7 @@ namespace ingenieria_software_santander_vega
                     try
                     {
                         bllRolesPermisos.EliminarComponenteBase(compSeleccionado.Id);
+                        RegistrarBitacora(BE.BITACORA_ACTIVIDAD_ENUM.ELIMINACION_COMPONENTE, "Componente: " + compSeleccionado.Nombre);
 
                         CargarDatosIniciales();
                         MessageBox.Show("Componente eliminado.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);

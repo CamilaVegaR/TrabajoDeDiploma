@@ -59,7 +59,6 @@
     <Compile Include="DAL_REPORTE.cs" />
     <Compile Include="DAL_RESERVA.cs" />
     <Compile Include="DAL_TRADUCCION.cs" />
-    <Compile Include="DAL_USUARIO_HISTORIAL.cs" />
     <Compile Include="DAL_BITACORA.cs" />
     <Compile Include="DAL_USUARIO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

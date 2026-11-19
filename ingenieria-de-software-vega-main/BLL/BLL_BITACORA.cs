@@ -25,7 +25,7 @@ namespace BLL
             }
 
             return nuevoId;
-        
+
         }
 
         public List<BE.BITACORA> Listar()
@@ -37,6 +37,24 @@ namespace BLL
         {
             int resultado = mapperLogins.ActualizarDVH(obj);
             return resultado;
+        }
+
+
+        public void ActualizarDVHUsuario(int idUsuario)
+        {
+            List<BE.BITACORA> lista = Listar();
+            foreach (BE.BITACORA registro in lista)
+            {
+                if (registro.Usuario == null || registro.Usuario.Id != idUsuario) continue;
+
+                string dvh = Servicios.GESTOR_INTEGRIDAD.CalcularDVH(registro);
+                if (registro.DVH != dvh)
+                {
+                    registro.DVH = dvh;
+                    ActualizarDVH(registro);
+                }
+            }
+            ActualizarDVVTabla();
         }
 
         private void ActualizarDVVTabla()

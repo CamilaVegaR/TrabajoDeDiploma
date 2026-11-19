@@ -102,20 +102,6 @@ namespace BLL
                 ActualizarDVV(new DIGITO_VERIFICADOR { Tabla = "COMPONENTE", DVV = dvvComponente });
             }
 
-            BLL_USUARIO_HISTORIAL bllUsuarioHistorial = new BLL_USUARIO_HISTORIAL();
-            List<USUARIO_HISTORIAL> historiales = bllUsuarioHistorial.ListarHistorialCompleto();
-
-            if (historiales != null && historiales.Any())
-            {
-                foreach (var h in historiales)
-                {
-                    h.DVH = GESTOR_INTEGRIDAD.CalcularDVH(h);
-                    bllUsuarioHistorial.ActualizarDVH(h);
-                }
-                string dvvUsuarioHistorial = GESTOR_INTEGRIDAD.CalcularDVV(historiales);
-                ActualizarDVV(new DIGITO_VERIFICADOR { Tabla = "USUARIO_HISTORIAL", DVV = dvvUsuarioHistorial });
-            }
-
             BLL_TRADUCCION bllTraduccion = new BLL_TRADUCCION();
             List<TRADUCCION> traducciones = bllTraduccion.listar();
 
@@ -130,7 +116,7 @@ namespace BLL
                 ActualizarDVV(new DIGITO_VERIFICADOR { Tabla = "TRADUCCION", DVV = dvvTraduccion });
             }
 
-  
+
             BLL_PACK bllPack = new BLL_PACK();
             List<PACK> packs = bllPack.ListarOrdenadosPorId_626CV();
             foreach (var p in packs)
@@ -201,8 +187,6 @@ namespace BLL
 
             VerificarTabla("COMPONENTE", new BLL_ROLES_PERMISOS().ListarComponentes().Cast<IIntegrable>(), errores);
 
-            VerificarTabla("USUARIO_HISTORIAL", new BLL_USUARIO_HISTORIAL().ListarHistorialCompleto().Cast<IIntegrable>(), errores);
-
             VerificarTabla("TRADUCCION", new BLL_TRADUCCION().listar().Cast<IIntegrable>(), errores);
 
             VerificarTabla("PACK", new BLL_PACK().ListarOrdenadosPorId_626CV().Cast<IIntegrable>(), errores);
@@ -237,7 +221,7 @@ namespace BLL
                 string dvhCalculado = GESTOR_INTEGRIDAD.CalcularDVH(reg);
                 if (reg.DVH != dvhCalculado)
                 {
-                    var propId = reg.GetType().GetProperty("Id") ?? reg.GetType().GetProperty("IdUsuario") ?? reg.GetType().GetProperty("IdHistorial") ?? reg.GetType().GetProperty("Id_626CV") ?? reg.GetType().GetProperty("IdCambio_626CV");
+                    var propId = reg.GetType().GetProperty("Id") ?? reg.GetType().GetProperty("IdUsuario") ?? reg.GetType().GetProperty("Id_626CV") ?? reg.GetType().GetProperty("IdCambio_626CV");
                     string idStr = propId != null ? propId.GetValue(reg).ToString() : "Desconocido";
 
                     errores.Add($"El registro ID [{idStr}] de la tabla '{nombreTabla}' fue alterado (Fallo en Hash Horizontal - DVH).");

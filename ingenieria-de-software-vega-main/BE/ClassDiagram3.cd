@@ -11,7 +11,7 @@
   <Class Name="BE.CLIENTE" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="7" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAABACBAAIAQQAAAAAAAAAQAAIAEAACAAQAIgBAACQA=</HashCode>
+      <HashCode>AAABAABAAIAQQAAAAAAAAAQAAIAEAACAAQAIgBAACQA=</HashCode>
       <FileName>CLIENTE.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
@@ -49,7 +49,7 @@
   <Class Name="BE.HORARIO_CLASE" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="5.25" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAKAAABAgAAAQCAEIAAgACAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <HashCode>AACAAABAgAAAQCAAIAAgACAAAAAAAAAAAQAAAAAAAAA=</HashCode>
       <FileName>HORARIO_CLASE.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
@@ -72,7 +72,7 @@
   <Class Name="BE.RESERVA" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="8.75" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>BAgAQABAAAAAQEAAIAAAQRAgAAEEIAAAAQAAABAIQAA=</HashCode>
+      <HashCode>AAgAAABAAAAAQEAAAAAAQRAgAAEEIAAAAQAAABAIQAA=</HashCode>
       <FileName>RESERVA.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
@@ -91,14 +91,6 @@
       <HashCode>AAACAAAAAISAgAKkgIACgAAAAAAAAAAgAYAAIgCAAgI=</HashCode>
       <FileName>USUARIO.cs</FileName>
       <NewMemberFileName>usuario.cs</NewMemberFileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
-  <Class Name="BE.USUARIO_HISTORIAL" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="7" Y="2.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>IAAAQiAAAGAAAAAgAAAAIAAAACABAAAAAQEAAAABAAI=</HashCode>
-      <FileName>USUARIO_HISTORIAL.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
@@ -126,7 +118,7 @@
   <Enum Name="BE.BITACORA_ACTIVIDAD_ENUM" Collapsed="true">
     <Position X="5.25" Y="4.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAABBAQABBAUAQAAAAAAAgAAIAASAEIAAAAACAAAAA=</HashCode>
+      <HashCode>QAQABRCQABBAcAQAAAAAAAgBAYJCCAEIEAgAAiAkEEA=</HashCode>
       <FileName>BITACORA_ACTIVIDAD_ENUM.cs</FileName>
     </TypeIdentifier>
   </Enum>
@@ -142,13 +134,6 @@
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAgABA=</HashCode>
       <FileName>SEXO_ENUM.cs</FileName>
-    </TypeIdentifier>
-  </Enum>
-  <Enum Name="BE.TIPO_OPERACION" Collapsed="true">
-    <Position X="10.5" Y="4.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAACAAgAAAACABAAAA=</HashCode>
-      <FileName>TIPO_OPERACION.cs</FileName>
     </TypeIdentifier>
   </Enum>
   <Enum Name="BE.CANAL_CONTACTO_ENUM">

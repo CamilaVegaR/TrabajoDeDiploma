@@ -63,14 +63,6 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="BE.USUARIO_HISTORIAL">
-    <Position X="36.5" Y="2" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>IAAAQiAAAGAAAAAgAAAAIAAAACABAAAAAQEAAAABAAI=</HashCode>
-      <FileName>USUARIO_HISTORIAL.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
-  </Class>
   <Class Name="BE.DIGITO_VERIFICADOR">
     <Position X="17.75" Y="5.25" Width="1.5" />
     <TypeIdentifier>
@@ -102,7 +94,7 @@
   <Enum Name="BE.BITACORA_ACTIVIDAD_ENUM">
     <Position X="16" Y="4.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAABBAQABBAEAAAAAAAAAAAAIAACAAIAAAAACAAAAA=</HashCode>
+      <HashCode>QAQABRCQABBAcAQAAAAAAAgBAYJCCAEIEAgAAiAkEEA=</HashCode>
       <FileName>BITACORA_ACTIVIDAD_ENUM.cs</FileName>
     </TypeIdentifier>
   </Enum>
@@ -111,13 +103,6 @@
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAgABA=</HashCode>
       <FileName>SEXO_ENUM.cs</FileName>
-    </TypeIdentifier>
-  </Enum>
-  <Enum Name="BE.TIPO_OPERACION">
-    <Position X="16" Y="2.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAACAAgAAAACABAAAA=</HashCode>
-      <FileName>TIPO_OPERACION.cs</FileName>
     </TypeIdentifier>
   </Enum>
   <Font Name="Segoe UI" Size="9" />

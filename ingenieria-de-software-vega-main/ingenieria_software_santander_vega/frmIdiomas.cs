@@ -39,7 +39,8 @@ namespace ingenieria_software_santander_vega
                 lstIdiomas.DataSource = bllIdioma.ListarIdiomas();
                 lstIdiomas.DisplayMember = "Nombre";
                 lstIdiomas.ValueMember = "Id";
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 MessageBox.Show("Error al cargar los idiomas", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -137,6 +138,7 @@ namespace ingenieria_software_santander_vega
                 }
 
                 bllTraduccion.GuardarTraduccionesModificadas(traduccionesModificadas);
+                RegistrarBitacora(BITACORA_ACTIVIDAD_ENUM.MODIFICACION_TRADUCCION, traduccionesModificadas.Count + " traduccion(es) modificada(s)");
 
                 foreach (TRADUCCION traduccion in traduccionesModificadas)
                 {
@@ -170,9 +172,11 @@ namespace ingenieria_software_santander_vega
                 if (!string.IsNullOrWhiteSpace(nombreNuevoIdioma))
                 {
                     bllIdioma.CrearIdioma(nombreNuevoIdioma);
+                    RegistrarBitacora(BITACORA_ACTIVIDAD_ENUM.CREACION_IDIOMA, "Idioma: " + nombreNuevoIdioma);
                     CargarIdiomas();
                 }
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 MessageBox.Show("Error al crear el nuevo idioma", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -182,6 +186,22 @@ namespace ingenieria_software_santander_vega
         private void btnVolver_Click(object sender, EventArgs e)
         {
             Navegar(new frmMenu(), null, true);
+        }
+
+        private void RegistrarBitacora(BITACORA_ACTIVIDAD_ENUM actividad, string observacion)
+        {
+            try
+            {
+                if (observacion != null && observacion.Length > 50)
+                    observacion = observacion.Substring(0, 50);
+                BITACORA bitacora = new BITACORA(Servicios.SINGLETON_SESION.GetInstance().usuario, DateTime.Now, actividad, observacion);
+                if (new BLL_BITACORA().Insertar(bitacora) == -1)
+                    MessageBox.Show("El cambio se guardó, pero no se pudo registrar en la bitácora.", "Bitácora", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            catch
+            {
+                MessageBox.Show("El cambio se guardó, pero no se pudo registrar en la bitácora.", "Bitácora", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
     }
 }

@@ -35,6 +35,17 @@ namespace BE
         RESERVA_AGENDADA,
         RESERVA_MODIFICADA,
         RESERVA_CANCELADA,
-        CLIENTE_REGISTRADO
+        CLIENTE_REGISTRADO,
+        // T02 - Gestión de usuarios, idiomas y perfiles
+        MODIFICACION_CONTRASENA,
+        CREACION_IDIOMA,
+        MODIFICACION_TRADUCCION,
+        CREACION_ETIQUETA,
+        CREACION_FAMILIA,
+        CREACION_PERMISO,
+        ELIMINACION_COMPONENTE,
+        REACTIVACION_USUARIO,
+        // T08 - Dígitos verificadores
+        RECALCULO_DV
     }
 }

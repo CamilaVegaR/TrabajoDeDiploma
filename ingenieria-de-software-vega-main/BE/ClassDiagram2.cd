@@ -70,18 +70,10 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
-  <Class Name="BE.USUARIO_HISTORIAL" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="13.5" Y="2.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>IAAAQiAAAGAAAAAgAAAAIAAAACABAAAAAQEAAAABAAI=</HashCode>
-      <FileName>USUARIO_HISTORIAL.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
   <Class Name="BE.CLIENTE">
     <Position X="11" Y="3" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAABACBAAIAQQAAAAAAAAAQAAIAEAACAAQAIgBAACQA=</HashCode>
+      <HashCode>AAABAABAAIAQQAAAAAAAAAQAAIAEAACAAQAIgBAACQA=</HashCode>
       <FileName>CLIENTE.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -89,7 +81,7 @@
   <Class Name="BE.HORARIO_CLASE">
     <Position X="9" Y="5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAKAAABAgAAAQCAEIAAgACAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <HashCode>AACAAABAgAAAQCAAIAAgACAAAAAAAAAAAQAAAAAAAAA=</HashCode>
       <FileName>HORARIO_CLASE.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -97,7 +89,7 @@
   <Class Name="BE.RESERVA">
     <Position X="12.75" Y="5.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>BAgAQABAAAAAQEAAIAAAQRAgAAEEIAAAAQAAABAIQAA=</HashCode>
+      <HashCode>AAgAAABAAAAAQEAAAAAAQRAgAAEEIAAAAQAAABAIQAA=</HashCode>
       <FileName>RESERVA.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -113,7 +105,7 @@
   <Class Name="BE.PACK" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="10.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>BQQgAABAAAAASAAAAAAAAAAAACAAAACgAQAAgBEEAAA=</HashCode>
+      <HashCode>AQQgAABAAAAASAAAAAAAAAAAACAAAACgAQAAgAEEAAA=</HashCode>
       <FileName>PACK.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
@@ -121,7 +113,7 @@
   <Class Name="BE.PACK_C" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="12.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>BQSwAAAQgAAACAAAAAAAAAASgCAAAICgAQAAgAEGEAA=</HashCode>
+      <HashCode>AQSwAAAQgAAACAAAAAAAAAASgCAAAICgAQAAgAEGEAA=</HashCode>
       <FileName>PACK_C.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
@@ -136,7 +128,7 @@
   <Class Name="BE.REPORTE_SECCION" Collapsed="true">
     <Position X="10.5" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAQAAAAAAAAEAAAEAAAAAAAAAAAAAIAAAAAAARAAAAA=</HashCode>
+      <HashCode>AAQAAAAAAAAEAAAAAAAAAAAAAAAAAIAAAAAAABAAAAA=</HashCode>
       <FileName>Reportes.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -164,7 +156,7 @@
   <Enum Name="BE.BITACORA_ACTIVIDAD_ENUM" Collapsed="true">
     <Position X="13.5" Y="4.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>QAAABBAQABBAUAQAAAAAAAgAAIBACAEIAAgAACAEAAA=</HashCode>
+      <HashCode>QAQABRCQABBAcAQAAAAAAAgBAYJCCAEIEAgAAiAkEEA=</HashCode>
       <FileName>BITACORA_ACTIVIDAD_ENUM.cs</FileName>
     </TypeIdentifier>
   </Enum>
@@ -173,13 +165,6 @@
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAgABA=</HashCode>
       <FileName>SEXO_ENUM.cs</FileName>
-    </TypeIdentifier>
-  </Enum>
-  <Enum Name="BE.TIPO_OPERACION" Collapsed="true">
-    <Position X="17" Y="4.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAACAAgAAAACABAAAA=</HashCode>
-      <FileName>TIPO_OPERACION.cs</FileName>
     </TypeIdentifier>
   </Enum>
   <Enum Name="BE.ESTADO_RESERVA_ENUM">

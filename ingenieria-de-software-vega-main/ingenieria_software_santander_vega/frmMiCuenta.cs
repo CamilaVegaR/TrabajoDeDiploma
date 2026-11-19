@@ -89,9 +89,10 @@ namespace ingenieria_software_santander_vega
 
 
                     bllUsuario.ModificarUsuario(usuarioActual, usuarioActual);
+                    RegistrarBitacora(BITACORA_ACTIVIDAD_ENUM.MODIFICACION_USUARIO, "Usuario: " + usuarioActual.NombreUsuario);
 
                     MessageBox.Show("Tus datos han sido actualizados correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    
+
                 }
             }
             catch (Exception ex)
@@ -160,12 +161,29 @@ namespace ingenieria_software_santander_vega
                 }
 
                 bllUsuario.CambiarContrasena(usuarioActual.Id, nuevaContrasena, usuarioActual);
+                RegistrarBitacora(BITACORA_ACTIVIDAD_ENUM.MODIFICACION_CONTRASENA, "Usuario: " + usuarioActual.NombreUsuario);
 
                 MessageBox.Show("Tu contraseña ha sido actualizada con éxito.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Ocurrió un error al intentar cambiar la contraseña: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+    
+        private void RegistrarBitacora(BITACORA_ACTIVIDAD_ENUM actividad, string observacion)
+        {
+            try
+            {
+                if (observacion != null && observacion.Length > 50)
+                    observacion = observacion.Substring(0, 50);
+                BITACORA bitacora = new BITACORA(Servicios.SINGLETON_SESION.GetInstance().usuario, DateTime.Now, actividad, observacion);
+                if (new BLL_BITACORA().Insertar(bitacora) == -1)
+                    MessageBox.Show("El cambio se guardó, pero no se pudo registrar en la bitácora.", "Bitácora", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            catch
+            {
+                MessageBox.Show("El cambio se guardó, pero no se pudo registrar en la bitácora.", "Bitácora", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
     }

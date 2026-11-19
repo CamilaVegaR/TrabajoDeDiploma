@@ -28,21 +28,6 @@ namespace BLL
                 usuarioInsertado.DVH = Servicios.GESTOR_INTEGRIDAD.CalcularDVH(usuarioInsertado);
                 actualizarDVH(usuarioInsertado);
                 ActualizarDVVTabla();
-
-                BLL_USUARIO_HISTORIAL historialBLL = new BLL_USUARIO_HISTORIAL();
-
-                USUARIO usuarioResponsable;
-
-                if (SINGLETON_SESION.IsLoggedIn())
-                {
-                    usuarioResponsable = SINGLETON_SESION.GetInstance().usuario;
-                }
-                else
-                {
-                    usuarioResponsable = usuarioInsertado;
-                }
-
-                historialBLL.RegistrarCambio(usuarioInsertado, usuarioResponsable, TIPO_OPERACION.ALTA);
             }
 
             return resultado;
@@ -78,7 +63,7 @@ namespace BLL
             return usuario;
         }
 
-        public List<BE.USUARIO> Listar(bool listarBorrados=false)
+        public List<BE.USUARIO> Listar(bool listarBorrados = false)
         {
             return mapperUsuario.Listar(listarBorrados);
         }
@@ -92,14 +77,9 @@ namespace BLL
         {
             mapperUsuario.ActualizarIdioma(idUsuario, idIdioma);
             ActualizarDVVTabla();
-            BLL_USUARIO_HISTORIAL historialBLL = new BLL_USUARIO_HISTORIAL();
-            USUARIO usuarioModificado = mapperUsuario.ObtenerPorId(idUsuario);
-            usuarioModificado.Idioma = new BLL_IDIOMA().ObtenerIdiomaPorId(idIdioma);
-            USUARIO responsable = SINGLETON_SESION.GetInstance().usuario;
-            historialBLL.RegistrarCambio(usuarioModificado, responsable, TIPO_OPERACION.MODIFICACION);
         }
 
-        public void ModificarUsuario(USUARIO usuarioModificado, USUARIO responsable, TIPO_OPERACION operacion = TIPO_OPERACION.MODIFICACION)
+        public void ModificarUsuario(USUARIO usuarioModificado, USUARIO responsable)
         {
             USUARIO usuarioAnterior = mapperUsuario.ObtenerPorId(usuarioModificado.Id);
 
@@ -117,15 +97,17 @@ namespace BLL
             actualizarDVH(usuarioModificado);
             ActualizarDVVTabla();
 
-            if(usuarioModificado.Id == SINGLETON_SESION.GetInstance().usuario.Id)
+            if (usuarioAnterior != null && usuarioAnterior.NombreUsuario != usuarioModificado.NombreUsuario)
+            {
+                new BLL_BITACORA().ActualizarDVHUsuario(usuarioModificado.Id);
+            }
+
+            if (usuarioModificado.Id == SINGLETON_SESION.GetInstance().usuario.Id)
             {
                 DAL_ROLES_PERMISOS dalRolesPermisos = new DAL_ROLES_PERMISOS();
                 dalRolesPermisos.CargarPermisosUsuario(usuarioModificado);
                 SINGLETON_SESION.GetInstance().usuario = usuarioModificado;
             }
-
-            BLL_USUARIO_HISTORIAL historialBLL = new BLL_USUARIO_HISTORIAL();
-            historialBLL.RegistrarCambio(usuarioModificado, responsable, operacion);
         }
 
         public void ReactivarUsuario(USUARIO usuarioAReactivar, USUARIO usuarioAdminLogueado)
@@ -135,8 +117,6 @@ namespace BLL
             usuarioAReactivar.DVH = Servicios.GESTOR_INTEGRIDAD.CalcularDVH(usuarioAReactivar);
             actualizarDVH(usuarioAReactivar);
             ActualizarDVVTabla();
-            BLL_USUARIO_HISTORIAL historialBLL = new BLL_USUARIO_HISTORIAL();
-            historialBLL.RegistrarCambio(usuarioAReactivar, usuarioAdminLogueado, TIPO_OPERACION.MODIFICACION);
         }
 
         public void EliminarUsuario(USUARIO usuarioAEliminar, USUARIO usuarioAdminLogueado)
@@ -146,9 +126,6 @@ namespace BLL
             usuarioAEliminar.DVH = Servicios.GESTOR_INTEGRIDAD.CalcularDVH(usuarioAEliminar);
             actualizarDVH(usuarioAEliminar);
             ActualizarDVVTabla();
-
-            BLL_USUARIO_HISTORIAL historialBLL = new BLL_USUARIO_HISTORIAL();
-            historialBLL.RegistrarCambio(usuarioAEliminar, usuarioAdminLogueado, TIPO_OPERACION.BAJA_LOGICA);
         }
 
         public bool CheckContrasena(int idUsuario, string contrasenaIngresada)
@@ -163,14 +140,12 @@ namespace BLL
             string contrasenaEncriptada = ENCRIPTADOR.Encriptar(nuevaContrasena);
             USUARIO usuario = mapperUsuario.ObtenerPorId(idUsuario);
             int resultado = mapperUsuario.ActualizarContrasena(idUsuario, contrasenaEncriptada);
-            if(resultado > 0)
+            if (resultado > 0)
             {
                 usuario.Contrasena = contrasenaEncriptada;
                 usuario.DVH = Servicios.GESTOR_INTEGRIDAD.CalcularDVH(usuario);
                 actualizarDVH(usuario);
                 ActualizarDVVTabla();
-                BLL_USUARIO_HISTORIAL historialBLL = new BLL_USUARIO_HISTORIAL();
-                historialBLL.RegistrarCambio(usuario, usuarioResponsable, TIPO_OPERACION.MODIFICACION);
             }
             return resultado;
         }

@@ -10,10 +10,8 @@ namespace BLL
     public class BLL_ROLES_PERMISOS
     {
         DAL.DAL_ROLES_PERMISOS mapperRoles = new DAL.DAL_ROLES_PERMISOS();
-        private BLL_USUARIO_HISTORIAL historialBLL;
         public BLL_ROLES_PERMISOS()
         {
-            historialBLL = new BLL_USUARIO_HISTORIAL();
         }
 
         public List<Componente> ListarComponentes()
@@ -100,12 +98,14 @@ namespace BLL
 
             int id = mapperRoles.InsertarComponente(componente, esFamilia);
 
-            if (id <= 0) {
+            if (id <= 0)
+            {
                 throw new Exception("Hubo un error al insertar el componente.");
-            };
+            }
+            ;
             Componente componenteInsertado = mapperRoles.ObtenerPorId(id);
 
-            componenteInsertado.DVH  = GESTOR_INTEGRIDAD.CalcularDVH(componenteInsertado);
+            componenteInsertado.DVH = GESTOR_INTEGRIDAD.CalcularDVH(componenteInsertado);
             ActualizarDVHComponente(componenteInsertado);
             ActualizarDVVTabla();
             return id > 0;

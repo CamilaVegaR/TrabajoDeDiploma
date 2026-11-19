@@ -66,10 +66,8 @@
     <Compile Include="Reportes.cs" />
     <Compile Include="RESERVA.cs" />
     <Compile Include="SEXO_ENUM.cs" />
-    <Compile Include="TIPO_OPERACION.cs" />
     <Compile Include="Traduccion.cs" />
     <Compile Include="USUARIO.cs" />
-    <Compile Include="USUARIO_HISTORIAL.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram1.cd" />

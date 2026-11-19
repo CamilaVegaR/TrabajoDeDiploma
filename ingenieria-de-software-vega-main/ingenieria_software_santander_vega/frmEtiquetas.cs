@@ -46,6 +46,7 @@ namespace ingenieria_software_santander_vega
                     };
 
                     bllEtiquetas.InsertarEtiqueta(nuevaEtiqueta);
+                    RegistrarBitacora(BITACORA_ACTIVIDAD_ENUM.CREACION_ETIQUETA, nuevaEtiqueta.Formulario + "." + nuevaEtiqueta.Clave);
 
                     txtFormulario.Clear();
                     txtClave.Clear();
@@ -67,6 +68,22 @@ namespace ingenieria_software_santander_vega
         private void btnVolver_Click(object sender, EventArgs e)
         {
             Navegar(new frmMenu(), null, true);
+        }
+    
+        private void RegistrarBitacora(BITACORA_ACTIVIDAD_ENUM actividad, string observacion)
+        {
+            try
+            {
+                if (observacion != null && observacion.Length > 50)
+                    observacion = observacion.Substring(0, 50);
+                BITACORA bitacora = new BITACORA(Servicios.SINGLETON_SESION.GetInstance().usuario, DateTime.Now, actividad, observacion);
+                if (new BLL_BITACORA().Insertar(bitacora) == -1)
+                    MessageBox.Show("El cambio se guardó, pero no se pudo registrar en la bitácora.", "Bitácora", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            catch
+            {
+                MessageBox.Show("El cambio se guardó, pero no se pudo registrar en la bitácora.", "Bitácora", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
     }
 }
