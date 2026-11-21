@@ -138,11 +138,133 @@ namespace BLL
                     cliente_626CV.SaldoClases_626CV.ToString());
             }
 
+            reporte_626CV.Secciones_626CV.Add(ArmarAnalisisInteligente_626CV(reservas_626CV, compras_626CV, clientesConSaldo_626CV, desde_626CV, hasta_626CV));
             reporte_626CV.Secciones_626CV.Add(indicadores_626CV);
             reporte_626CV.Secciones_626CV.Add(ArmarVentasPorPack_626CV(compras_626CV));
             reporte_626CV.Secciones_626CV.Add(ocupacionHorario_626CV);
             reporte_626CV.Secciones_626CV.Add(saldos_626CV);
             return reporte_626CV;
+        }
+
+        // A02 - Reporte inteligente: el sistema analiza los datos del período y genera
+        // comparaciones, alertas, destacados y recomendaciones a partir de reglas.
+        private const decimal OCUPACION_BAJA_626CV = 30m;
+        private const decimal OCUPACION_ALTA_626CV = 90m;
+        private const decimal CANCELACION_ALTA_626CV = 20m;
+
+        private REPORTE_SECCION ArmarAnalisisInteligente_626CV(List<RESERVA> reservas_626CV, List<COMPRA> compras_626CV,
+            List<CLIENTE> clientesConSaldo_626CV, DateTime desde_626CV, DateTime hasta_626CV)
+        {
+            REPORTE_SECCION seccion_626CV = new REPORTE_SECCION("Análisis inteligente: conclusiones y recomendaciones", "Tipo", "Análisis");
+            List<RESERVA> activas_626CV = reservas_626CV.Where(r => r.Estado_626CV == ESTADO_RESERVA_ENUM.ACTIVA_626CV).ToList();
+            int alertas_626CV = 0;
+
+            // 1. Comparación con el período anterior de la misma duración
+            int dias_626CV = (hasta_626CV.Date - desde_626CV.Date).Days + 1;
+            DateTime hastaAnterior_626CV = desde_626CV.Date.AddDays(-1);
+            DateTime desdeAnterior_626CV = hastaAnterior_626CV.AddDays(-(dias_626CV - 1));
+            List<COMPRA> comprasAnteriores_626CV = mapperReporte_626CV.ListarVentasPeriodo_626CV(desdeAnterior_626CV, hastaAnterior_626CV);
+            List<RESERVA> reservasAnteriores_626CV = mapperReporte_626CV.ListarReservasPeriodo_626CV(desdeAnterior_626CV, hastaAnterior_626CV);
+            string periodoAnterior_626CV = $"{desdeAnterior_626CV:dd/MM/yyyy} al {hastaAnterior_626CV:dd/MM/yyyy}";
+
+            AgregarFila_626CV(seccion_626CV, "Comparación", DescribirVariacion_626CV("Los ingresos",
+                compras_626CV.Sum(c => c.Importe_626CV), comprasAnteriores_626CV.Sum(c => c.Importe_626CV), periodoAnterior_626CV));
+            AgregarFila_626CV(seccion_626CV, "Comparación", DescribirVariacion_626CV("Las reservas activas",
+                activas_626CV.Count, reservasAnteriores_626CV.Count(r => r.Estado_626CV == ESTADO_RESERVA_ENUM.ACTIVA_626CV), periodoAnterior_626CV));
+
+            // 2. Ocupación por horario: alertas de ocupación baja o alta
+            var horarios_626CV = activas_626CV
+                .GroupBy(r => r.Horario_626CV.Id_626CV)
+                .Select(g => new
+                {
+                    Horario = g.First().Horario_626CV,
+                    Ocupacion = CalcularOcupacionPromedio_626CV(g.ToList())
+                })
+                .OrderByDescending(x => x.Ocupacion)
+                .ToList();
+
+            foreach (var horario_626CV in horarios_626CV)
+            {
+                string descripcion_626CV = DescribirHorario_626CV(horario_626CV.Horario);
+                if (horario_626CV.Ocupacion < OCUPACION_BAJA_626CV)
+                {
+                    alertas_626CV++;
+                    AgregarFila_626CV(seccion_626CV, "Alerta", $"El horario {descripcion_626CV} tiene una ocupación baja ({FormatearPorcentaje_626CV(horario_626CV.Ocupacion)}).");
+                    AgregarFila_626CV(seccion_626CV, "Recomendación", $"Evaluar mover, unificar o promocionar el horario {descripcion_626CV}.");
+                }
+                else if (horario_626CV.Ocupacion > OCUPACION_ALTA_626CV)
+                {
+                    alertas_626CV++;
+                    AgregarFila_626CV(seccion_626CV, "Alerta", $"El horario {descripcion_626CV} está casi completo ({FormatearPorcentaje_626CV(horario_626CV.Ocupacion)}).");
+                    AgregarFila_626CV(seccion_626CV, "Recomendación", $"Evaluar abrir un horario adicional cercano a {descripcion_626CV}.");
+                }
+            }
+
+            // 3. Tasa de cancelación
+            if (reservas_626CV.Count > 0)
+            {
+                decimal tasaCancelacion_626CV = (decimal)(reservas_626CV.Count - activas_626CV.Count) * 100m / reservas_626CV.Count;
+                if (tasaCancelacion_626CV > CANCELACION_ALTA_626CV)
+                {
+                    alertas_626CV++;
+                    AgregarFila_626CV(seccion_626CV, "Alerta", $"La tasa de cancelación es alta ({FormatearPorcentaje_626CV(tasaCancelacion_626CV)} de las reservas).");
+                    AgregarFila_626CV(seccion_626CV, "Recomendación", "Enviar recordatorios a los clientes antes de cada clase.");
+                }
+            }
+
+            // 4. Packs activos sin ventas en el período
+            List<string> packsVendidos_626CV = compras_626CV.Select(c => c.Pack_626CV.Nombre_626CV).Distinct().ToList();
+            foreach (PACK pack_626CV in new BLL_PACK().ListarActivos_626CV().Where(p => !packsVendidos_626CV.Contains(p.Nombre_626CV)))
+            {
+                alertas_626CV++;
+                AgregarFila_626CV(seccion_626CV, "Alerta", $"El pack {pack_626CV.Nombre_626CV} no tuvo ventas en el período.");
+                AgregarFila_626CV(seccion_626CV, "Recomendación", $"Revisar el precio o el descuento del pack {pack_626CV.Nombre_626CV}.");
+            }
+
+            // 5. Clientes con saldo que no reservaron en el período
+            List<int> clientesConReserva_626CV = activas_626CV.Select(r => r.Cliente_626CV.Id_626CV).Distinct().ToList();
+            int clientesInactivos_626CV = clientesConSaldo_626CV.Count(c => !clientesConReserva_626CV.Contains(c.Id_626CV));
+            if (clientesInactivos_626CV > 0)
+            {
+                alertas_626CV++;
+                AgregarFila_626CV(seccion_626CV, "Alerta", $"{clientesInactivos_626CV} cliente(s) tienen clases disponibles pero no reservaron en el período.");
+                AgregarFila_626CV(seccion_626CV, "Recomendación", "Contactar a esos clientes para que usen su saldo (ver sección Clientes con saldo disponible).");
+            }
+
+            // 6. Destacados del período
+            if (horarios_626CV.Count > 0)
+                AgregarFila_626CV(seccion_626CV, "Destacado", $"Horario más ocupado: {DescribirHorario_626CV(horarios_626CV.First().Horario)} ({FormatearPorcentaje_626CV(horarios_626CV.First().Ocupacion)}).");
+
+            if (compras_626CV.Count > 0)
+            {
+                var packMasVendido_626CV = compras_626CV.GroupBy(c => c.Pack_626CV.Nombre_626CV)
+                    .OrderByDescending(g => g.Sum(c => c.Importe_626CV)).First();
+                AgregarFila_626CV(seccion_626CV, "Destacado", $"Pack con más ingresos: {packMasVendido_626CV.Key} ({FormatearImporte_626CV(packMasVendido_626CV.Sum(c => c.Importe_626CV))}).");
+
+                var canalPrincipal_626CV = compras_626CV.GroupBy(c => c.CanalContacto_626CV)
+                    .OrderByDescending(g => g.Count()).First();
+                AgregarFila_626CV(seccion_626CV, "Destacado", $"Canal con más ventas: {DescribirCanal_626CV(canalPrincipal_626CV.Key)} ({canalPrincipal_626CV.Count()} compras).");
+            }
+
+            if (alertas_626CV == 0)
+                AgregarFila_626CV(seccion_626CV, "Conclusión", "No se detectaron alertas en el período.");
+
+            seccion_626CV.Resumen_626CV.Add($"Alertas detectadas: {alertas_626CV}");
+            seccion_626CV.Resumen_626CV.Add($"Criterios: ocupación baja < {OCUPACION_BAJA_626CV}%, ocupación alta > {OCUPACION_ALTA_626CV}%, cancelación alta > {CANCELACION_ALTA_626CV}%.");
+            return seccion_626CV;
+        }
+
+        private string DescribirVariacion_626CV(string indicador_626CV, decimal actual_626CV, decimal anterior_626CV, string periodoAnterior_626CV)
+        {
+            if (anterior_626CV == 0)
+                return $"{indicador_626CV} no se pueden comparar porque no hubo movimientos en el período anterior ({periodoAnterior_626CV}).";
+
+            decimal variacion_626CV = (actual_626CV - anterior_626CV) * 100m / anterior_626CV;
+            if (variacion_626CV == 0)
+                return $"{indicador_626CV} se mantuvieron igual que en el período anterior ({periodoAnterior_626CV}).";
+
+            string sentido_626CV = variacion_626CV > 0 ? "subieron" : "bajaron";
+            return $"{indicador_626CV} {sentido_626CV} un {FormatearPorcentaje_626CV(Math.Abs(variacion_626CV))} respecto del período anterior ({periodoAnterior_626CV}).";
         }
 
 
@@ -267,4 +389,3 @@ namespace BLL
         }
     }
 }
-
