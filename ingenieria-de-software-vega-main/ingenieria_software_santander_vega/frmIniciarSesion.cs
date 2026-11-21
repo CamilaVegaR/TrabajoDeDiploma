@@ -116,7 +116,10 @@ namespace ingenieria_software_santander_vega
                 bllBackup.RestaurarUltimoBackup();
                 this.Cursor = Cursors.Default;
 
-                if (bllDV.ValidarIntegridadBaseDatos().Count == 0)
+                bool integra = bllDV.ValidarIntegridadBaseDatos().Count == 0;
+                RegistrarRestauracionEnBitacora(fechaBackup.Value, integra);
+
+                if (integra)
                 {
                     MessageBox.Show($"La base de datos se restauró correctamente al backup del {fechaBackup.Value:dd/MM/yyyy HH:mm}.\nVuelva a iniciar sesión.",
                         "Volver atrás", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -135,6 +138,24 @@ namespace ingenieria_software_santander_vega
 
             // Después de restaurar, la base cambió: se pide iniciar sesión de nuevo.
             return false;
+        }
+
+        // T07: se registra en la bitácora la restauración del backup.
+        // Se graba después de restaurar para que no se pierda al volver atrás.
+        private void RegistrarRestauracionEnBitacora(DateTime fechaBackup, bool integra)
+        {
+            try
+            {
+                string observacion = $"Backup del {fechaBackup:dd/MM/yyyy HH:mm} - " + (integra ? "base íntegra" : "con inconsistencias");
+                BE.BITACORA bitacora = new BE.BITACORA(SINGLETON_SESION.GetInstance().usuario, DateTime.Now,
+                    BE.BITACORA_ACTIVIDAD_ENUM.BACKUP_RESTAURADO, observacion);
+                new BLL_BITACORA().Insertar(bitacora);
+            }
+            catch
+            {
+                // Si el usuario no existe en el backup restaurado, no se puede registrar la actividad;
+                // la restauración igual se informa al usuario.
+            }
         }
 
         private void btnLogin_Click(object sender, EventArgs e)

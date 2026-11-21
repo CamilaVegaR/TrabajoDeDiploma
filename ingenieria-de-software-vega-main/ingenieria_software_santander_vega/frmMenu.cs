@@ -149,11 +149,11 @@ namespace ingenieria_software_santander_vega
                 throw new Exception("Error al registrar el logout en la bitácora.");
             }
 
-            GenerarBackupSiCorresponde();
+            GenerarBackupSiCorresponde(usuario);
         }
 
 
-        private void GenerarBackupSiCorresponde()
+        private void GenerarBackupSiCorresponde(BE.USUARIO usuario)
         {
             try
             {
@@ -172,6 +172,9 @@ namespace ingenieria_software_santander_vega
 
                 BLL_BACKUP backupBLL = new BLL_BACKUP();
                 backupBLL.GenerarBackup();
+
+                // T07: se registra en la bitácora que el backup se generó
+                new BLL_BITACORA().Insertar(new BITACORA(usuario, DateTime.Now, BE.BITACORA_ACTIVIDAD_ENUM.BACKUP_GENERADO));
             }
             catch (Exception ex)
             {

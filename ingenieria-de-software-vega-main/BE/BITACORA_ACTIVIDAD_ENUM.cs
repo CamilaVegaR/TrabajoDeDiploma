@@ -46,6 +46,10 @@ namespace BE
         ELIMINACION_COMPONENTE,
         REACTIVACION_USUARIO,
         // T08 - Dígitos verificadores
-        RECALCULO_DV
+        RECALCULO_DV,
+
+        // T07 - Gestión de backup
+        BACKUP_GENERADO,
+        BACKUP_RESTAURADO
     }
 }
